@@ -10,7 +10,10 @@ type Window struct {
 }
 
 func initX() (*xgbutil.XUtil, error) {
-    X, err := xgbutil.NewConn()
+    var err error
+    var X   *xgbutil.XUtil
+
+    X, err = xgbutil.NewConn()
     if (err != nil) {
         return nil, err
     }
@@ -18,8 +21,10 @@ func initX() (*xgbutil.XUtil, error) {
 }
 
 func createWindow(X *xgbutil.XUtil) (*Window, error) {
-    var err error
-    window := new(Window)
+    var err     error
+    var window  *Window
+
+    window = new(Window)
     window.win, err = xwindow.Create(X, X.RootWin())
     if (err != nil) {
         return nil, err
