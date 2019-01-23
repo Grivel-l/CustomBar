@@ -30,3 +30,4 @@ func setWindowOptions(window *xwindow.Window) (error) {
     }
     return nil
 }
+
