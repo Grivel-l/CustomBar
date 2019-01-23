@@ -2,43 +2,48 @@ package main
 
 import (
     "fmt"
-    "github.com/BurntSushi/xgbutil"
+    /* "github.com/BurntSushi/xgbutil" */
     /* "github.com/BurntSushi/xgb" */
-    "github.com/BurntSushi/xgbutil/xwindow"
+    /* "github.com/BurntSushi/xgbutil/xwindow" */
+    "github.com/BurntSushi/xgbutil/ewmh"
     /* "github.com/BurntSushi/xgb/xproto" */
 )
 
+func errorHandler(err error) {
+    fmt.Printf("An error occured: %v\n", err)
+}
+
 func main() {
-    xutil, err := xgbutil.NewConn()
-    /* var xutil *XUtil, err error = xgbutil.NewConn() */
+    X, err := initX()
     if (err != nil) {
+        errorHandler(err)
         return
     }
-    /* window, err := xwindow.Generate(xutil) */
+    window, err := createWindow(X)
     if (err != nil) {
+        errorHandler(err)
         return
     }
-    /* if (err != nil) { */
-    /*     return */
-    /* } */
-    /* conn, err := xgb.NewConn() */
-    /* fmt.Printf("Hello: %+v\n", conn); */
+    err = ewmh.WmWindowTypeSet(window.win.X, window.win.Id, []string{"_NET_WM_WINDOW_DOCK"});
     if (err != nil) {
+        errorHandler(err)
         return
     }
-    win := xutil.RootWin()
+    err = ewmh.WmStateSet(window.win.X, window.win.Id, []string{"_NET_WM_STATE_STICKY"});
     if (err != nil) {
-        fmt.Printf("Return 1 %v\n", err);
+        errorHandler(err)
         return
     }
-    wini, err := xwindow.Create(xutil, win);
-    /* xwindow.Generate(X) */
-    xwindow.Generate(xutil)
+    err = ewmh.WmDesktopSet(window.win.X, window.win.Id, ^uint(0))
     if (err != nil) {
-        fmt.Printf("Return %v\n", err);
+        errorHandler(err)
         return
     }
-    fmt.Printf("%+v\n", wini);
-    /* win.Map() */
+    err = ewmh.WmNameSet(window.win.X, window.win.Id, "myBar")
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
+    for {}
     fmt.Printf("HelloWorld!\n")
 }
