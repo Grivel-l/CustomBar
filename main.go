@@ -15,7 +15,7 @@ func errorHandler(err error) {
 func main() {
     var err     error
     var X       *xgbutil.XUtil
-    var window  *Window
+    var window  Window
 
     X, err = initX()
     if (err != nil) {
@@ -27,12 +27,11 @@ func main() {
         errorHandler(err)
         return
     }
-    setWindowOptions(window.win)
-    err = colorWindow(window.win.X, window.win.Id, &window.img)
+    err = setWindowOptions(window.win)
     if (err != nil) {
         errorHandler(err)
         return
     }
+    window.win.Map()
     for {}
-    window.img.Destroy()
 }
