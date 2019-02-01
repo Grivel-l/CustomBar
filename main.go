@@ -3,9 +3,6 @@ package main
 import (
     "fmt"
     "github.com/BurntSushi/xgbutil"
-    /* "github.com/BurntSushi/xgb" */
-    /* "github.com/BurntSushi/xgbutil/xwindow" */
-    /* "github.com/BurntSushi/xgb/xproto" */
 )
 
 func errorHandler(err error) {
