@@ -26,10 +26,10 @@ func createWindow(X *xgbutil.XUtil) (Window, error) {
     var window  Window
 
     window.win, err = xwindow.Generate(X)
-    if err != nil {
+    if (err != nil) {
         return window, err
     }
-    window.win.Create(X.RootWin(), 1, 1, 1920, 100, xproto.CwBackPixel, 0x0)
+    window.win.Create(X.RootWin(), 1, 1, 1920, 40, xproto.CwBackPixel, 0x0)
     return window, nil
 }
 

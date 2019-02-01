@@ -42,6 +42,10 @@ func setWindowOptions(window *xwindow.Window) (error) {
     if (err != nil) {
         return err
     }
+    err = ewmh.WmWindowTypeSet(window.X, window.Id, []string{"_NET_WM_WINDOW_TYPE_DOCK"})
+    if (err != nil) {
+        return err
+    }
     /* strut.Left = 0 */
     /* strut.Right = 0 */
     /* strut.Top = 100 */
