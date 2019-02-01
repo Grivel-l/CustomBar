@@ -9,10 +9,6 @@ func setWindowOptions(window *xwindow.Window) (error) {
     var err             error
     var strutPartial    ewmh.WmStrutPartial
 
-    err = ewmh.WmDesktopSet(window.X, window.Id, ^uint(0))
-    if (err != nil) {
-        return err
-    }
     err = ewmh.WmNameSet(window.X, window.Id, "myBar")
     if (err != nil) {
         return err
