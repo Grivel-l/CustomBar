@@ -16,9 +16,11 @@ func main() {
     var err     error
     var X       *xgbutil.XUtil
     var window  Window
-    var config  BarConfig;
+    var config  BarConfig
+    var appName string
 
-    err = fillConfig(&config)
+    appName = "myBar"
+    err = fillConfig(&config, appName)
     if (err != nil) {
         errorHandler(err)
         return
