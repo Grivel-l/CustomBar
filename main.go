@@ -6,6 +6,9 @@ import (
 )
 
 type BarConfig struct {
+    marginTop   int
+    marginRight int
+    marginLeft  int
 }
 
 func errorHandler(err error) {
