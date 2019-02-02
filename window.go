@@ -21,7 +21,7 @@ func initX() (*xgbutil.XUtil, error) {
     return X, nil
 }
 
-func createWindow(X *xgbutil.XUtil) (Window, error) {
+func createWindow(X *xgbutil.XUtil, config BarConfig) (Window, error) {
     var err     error
     var window  Window
 
@@ -29,7 +29,13 @@ func createWindow(X *xgbutil.XUtil) (Window, error) {
     if (err != nil) {
         return window, err
     }
-    window.win.Create(X.RootWin(), 1, 1, 1920, 40, xproto.CwBackPixel, 0x0)
+    window.win.Create(X.RootWin(),
+        config.marginLeft,
+        config.marginTop,
+        config.width,
+        config.height,
+        xproto.CwBackPixel,
+        0x0)
     return window, nil
 }
 

@@ -6,6 +6,8 @@ import (
 )
 
 type BarConfig struct {
+    height      int
+    width       int
     marginTop   int
     marginRight int
     marginLeft  int
@@ -33,12 +35,12 @@ func main() {
         errorHandler(err)
         return
     }
-    window, err = createWindow(X)
+    window, err = createWindow(X, config)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    err = setWindowOptions(window.win)
+    err = setWindowOptions(window.win, config)
     if (err != nil) {
         errorHandler(err)
         return

@@ -5,17 +5,10 @@ import (
     "github.com/BurntSushi/xgbutil/xwindow"
 )
 
-func setWindowOptions(window *xwindow.Window) (error) {
+func setWindowOptions(window *xwindow.Window, config BarConfig) (error) {
     var err             error
-    var strutPartial    ewmh.WmStrutPartial
 
     err = ewmh.WmNameSet(window.X, window.Id, "myBar")
-    if (err != nil) {
-        return err
-    }
-    strutPartial.Top = 40
-    strutPartial.TopEndX = 1920
-    err = ewmh.WmStrutPartialSet(window.X, window.Id, &strutPartial);
     if (err != nil) {
         return err
     }

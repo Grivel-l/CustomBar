@@ -27,8 +27,20 @@ func handleLine(config *BarConfig, line string) (error) {
             config.marginRight, err = strconv.Atoi(value)
         case "margin-left":
             config.marginLeft, err = strconv.Atoi(value)
+        case "height":
+            config.height, err = strconv.Atoi(value)
+        case "width":
+            config.width, err = strconv.Atoi(value)
     }
     return err
+}
+
+func defaultConfig(config *BarConfig) {
+    config.height = 40
+    config.width= 150
+    config.marginTop = 0
+    config.marginLeft = 0
+    config.marginRight = 0
 }
 
 func fillConfig(config *BarConfig, appName string) (error) {
@@ -38,6 +50,7 @@ func fillConfig(config *BarConfig, appName string) (error) {
     var lines   []string
     var path    string
 
+    defaultConfig(config)
     path = strings.Join([]string{os.Getenv("HOME"), "/.config/", appName, "/config"}, "")
     _, err = os.Stat(path)
     if (os.IsNotExist(err)) {
