@@ -25,7 +25,7 @@ func main() {
     var config  BarConfig
     var appName string
 
-    appName = "myBar"
+    appName = "custombar"
     err = fillConfig(&config, appName)
     if (err != nil) {
         errorHandler(err)
