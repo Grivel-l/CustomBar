@@ -11,6 +11,7 @@ type BarConfig struct {
     marginTop   int
     marginRight int
     marginLeft  int
+    opacity     float64
 }
 
 func errorHandler(err error) {

@@ -16,6 +16,14 @@ func setWindowOptions(window *xwindow.Window, config BarConfig) (error) {
     if (err != nil) {
         return err
     }
+    err = ewmh.WmStateSet(window.X, window.Id, []string{"_NET_WM_STATE_STICKY", "_NET_WM_STATE_ABOVE"})
+    if (err != nil) {
+        return err
+    }
+    err = ewmh.WmWindowOpacitySet(window.X, window.Id, config.opacity)
+    if (err != nil) {
+        return err
+    }
     return nil
 }
 
