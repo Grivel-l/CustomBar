@@ -4,7 +4,7 @@ import (
     "image/color"
 )
 
-func printString(window Window, config BarConfig) {
+func printString(window Window) {
     window.img.Text(0, 0, color.RGBA{
         R: 0xff,
         G: 0xff,

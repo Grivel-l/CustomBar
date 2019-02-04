@@ -46,7 +46,7 @@ func main() {
         errorHandler(err)
         return
     }
-    printString(window, config)
+    printString(window)
     window.win.Map()
     for {}
 }
