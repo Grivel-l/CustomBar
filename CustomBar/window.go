@@ -1,13 +1,19 @@
 package main
 
 import (
+    "image"
+    "golang.org/x/image/font/gofont/goregular"
     "github.com/BurntSushi/xgbutil"
-    "github.com/BurntSushi/xgbutil/xwindow"
     "github.com/BurntSushi/xgb/xproto"
+    "github.com/BurntSushi/xgbutil/xwindow"
+    "github.com/BurntSushi/xgbutil/xgraphics"
+    "github.com/BurntSushi/freetype-go/freetype/truetype"
 )
 
 type Window struct {
-    win *xwindow.Window
+    win     *xwindow.Window
+    img     *xgraphics.Image
+    font    *truetype.Font
 }
 
 func initX() (*xgbutil.XUtil, error) {
@@ -36,6 +42,11 @@ func createWindow(X *xgbutil.XUtil, config BarConfig) (Window, error) {
         config.height,
         xproto.CwBackPixel,
         0x0)
-    return window, nil
+    window.img = xgraphics.New(X, image.Rect(0, 0, config.width, config.height))
+    window.font, err = truetype.Parse(goregular.TTF)
+    if (err != nil) {
+        return window, err
+    }
+    return window, window.img.XSurfaceSet(window.win.Id)
 }
 
