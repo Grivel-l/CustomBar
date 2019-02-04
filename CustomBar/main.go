@@ -14,6 +14,11 @@ type BarConfig struct {
     opacity     float64
 }
 
+type Pos struct {
+    x   int
+    y   int
+}
+
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
@@ -46,7 +51,7 @@ func main() {
         errorHandler(err)
         return
     }
-    printString(window)
+    printString(window, "HelloWorld", Pos{x: 0, y: 0})
     window.win.Map()
     for {}
 }
