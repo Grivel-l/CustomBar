@@ -6,7 +6,7 @@ import (
 )
 
 func setWindowOptions(window *xwindow.Window, config BarConfig) (error) {
-    var err             error
+    var err error
 
     err = ewmh.WmNameSet(window.X, window.Id, "myBar")
     if (err != nil) {

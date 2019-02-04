@@ -39,7 +39,7 @@ func handleLine(config *BarConfig, line string) (error) {
 
 func defaultConfig(config *BarConfig) {
     config.height = 40
-    config.width= 150
+    config.width= 1920
     config.marginTop = 0
     config.marginLeft = 0
     config.marginRight = 0

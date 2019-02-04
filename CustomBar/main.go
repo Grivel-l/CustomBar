@@ -46,6 +46,11 @@ func main() {
         errorHandler(err)
         return
     }
+    err = printString(window.win.X, window.win.Id, config)
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
     window.win.Map()
     for {}
 }
