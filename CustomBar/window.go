@@ -27,7 +27,7 @@ func initX() (*xgbutil.XUtil, error) {
     return X, nil
 }
 
-func createWindow(X *xgbutil.XUtil, config BarConfig) (Window, error) {
+func createWindow(X *xgbutil.XUtil) (Window, error) {
     var err     error
     var window  Window
 

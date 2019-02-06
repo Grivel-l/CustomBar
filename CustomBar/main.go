@@ -1,7 +1,12 @@
 package main
 
+// #include "./palib.h"
+// #cgo pkg-config: libpulse
+import "C"
+
 import (
     "fmt"
+    "unsafe"
     "github.com/BurntSushi/xgbutil"
 )
 
@@ -19,6 +24,13 @@ type Pos struct {
     y   int
 }
 
+var config  BarConfig
+
+//export set_volume
+func set_volume(volume int) {
+    fmt.Printf("Volume is: %v\n", volume);
+}
+
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
@@ -27,11 +39,14 @@ func main() {
     var err     error
     var X       *xgbutil.XUtil
     var window  Window
-    var config  BarConfig
     var appName string
+    var cstring *C.char
 
     appName = "custombar"
-    err = fillConfig(&config, appName)
+    cstring = C.CString(appName)
+    C.create_con(cstring)
+    C.free(unsafe.Pointer(cstring))
+    err = fillConfig(appName)
     if (err != nil) {
         errorHandler(err)
         return
@@ -41,12 +56,12 @@ func main() {
         errorHandler(err)
         return
     }
-    window, err = createWindow(X, config)
+    window, err = createWindow(X)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    err = setWindowOptions(window.win, config)
+    err = setWindowOptions(window.win)
     if (err != nil) {
         errorHandler(err)
         return

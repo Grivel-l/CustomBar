@@ -9,7 +9,7 @@ import (
     "io/ioutil"
 )
 
-func handleLine(config *BarConfig, line string) (error) {
+func handleLine(line string) (error) {
     var err     error
     var option  []string
     var value   string
@@ -37,7 +37,7 @@ func handleLine(config *BarConfig, line string) (error) {
     return err
 }
 
-func defaultConfig(config *BarConfig) {
+func defaultConfig() {
     config.height = 40
     config.width= 1920
     config.marginTop = 0
@@ -46,14 +46,14 @@ func defaultConfig(config *BarConfig) {
     config.opacity = 0.7
 }
 
-func fillConfig(config *BarConfig, appName string) (error) {
+func fillConfig(appName string) (error) {
     var i       int
     var err     error
     var content []byte
     var lines   []string
     var path    string
 
-    defaultConfig(config)
+    defaultConfig()
     path = strings.Join([]string{os.Getenv("HOME"), "/.config/", appName, "/config"}, "")
     _, err = os.Stat(path)
     if (os.IsNotExist(err)) {
@@ -67,7 +67,7 @@ func fillConfig(config *BarConfig, appName string) (error) {
     }
     lines = strings.Split(string(content), "\n")
     for i = 0; i < len(lines); i += 1 {
-        err = handleLine(config, lines[i])
+        err = handleLine(lines[i])
         if (err != nil) {
             return errors.New(fmt.Sprintf("Bad value at line %v of config file: %v", i + 1, strings.TrimSpace(strings.Split(lines[i], "=")[1])))
         }
