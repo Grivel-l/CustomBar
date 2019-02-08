@@ -24,8 +24,6 @@ type Pos struct {
     y   int
 }
 
-var config  BarConfig
-
 //export set_volume
 func set_volume(volume int) {
     fmt.Printf("Volume is: %v\n", volume);
@@ -41,12 +39,13 @@ func main() {
     var window  Window
     var appName string
     var cstring *C.char
+    var config  BarConfig
 
     appName = "custombar"
     cstring = C.CString(appName)
     C.create_con(cstring)
     C.free(unsafe.Pointer(cstring))
-    err = fillConfig(appName)
+    err = fillConfig(appName, &config)
     if (err != nil) {
         errorHandler(err)
         return
@@ -56,12 +55,12 @@ func main() {
         errorHandler(err)
         return
     }
-    window, err = createWindow(X)
+    window, err = createWindow(X, config)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    err = setWindowOptions(window.win)
+    err = setWindowOptions(window.win, config)
     if (err != nil) {
         errorHandler(err)
         return

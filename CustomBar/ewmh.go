@@ -5,7 +5,7 @@ import (
     "github.com/BurntSushi/xgbutil/xwindow"
 )
 
-func setWindowOptions(window *xwindow.Window) (error) {
+func setWindowOptions(window *xwindow.Window, config BarConfig) (error) {
     var err error
 
     err = ewmh.WmNameSet(window.X, window.Id, "myBar")
