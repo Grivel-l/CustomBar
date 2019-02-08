@@ -25,12 +25,25 @@ type Pos struct {
 }
 
 //export set_volume
-func set_volume(volume int) {
-    fmt.Printf("Volume is: %v\n", volume);
+func set_volume(volume int, config unsafe.Pointer, window unsafe.Pointer) {
+    var yo  BarConfig
+    var win Window
+
+    yo = *(*BarConfig)(config)
+    win = *(*Window)(window)
+    fmt.Printf("Volume is: %v, %v, %v\n", volume, yo.height, win.win);
 }
 
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
+}
+
+func initPulseAudio(appName string, config BarConfig, window Window) {
+    var cstring *C.char
+
+    cstring = C.CString(appName)
+    C.create_con(cstring, unsafe.Pointer(&config), unsafe.Pointer(&window))
+    C.free(unsafe.Pointer(cstring))
 }
 
 func main() {
@@ -38,14 +51,11 @@ func main() {
     var X       *xgbutil.XUtil
     var window  Window
     var appName string
-    var cstring *C.char
     var config  BarConfig
 
     appName = "custombar"
-    cstring = C.CString(appName)
-    C.create_con(cstring)
-    C.free(unsafe.Pointer(cstring))
     err = fillConfig(appName, &config)
+    initPulseAudio(appName, config, window)
     if (err != nil) {
         errorHandler(err)
         return

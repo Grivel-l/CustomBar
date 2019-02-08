@@ -1,6 +1,6 @@
 #include "palib.h"
 
-extern void set_volume(int volume);
+extern void set_volume(int volume, void *config, void *window);
 
 pa_mainloop *loop;
 
@@ -9,32 +9,33 @@ void            destroy_con(void) {
     pa_mainloop_free(loop);
 }
 
-static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void *userdata) {
+static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void *userData) {
     (void)c;
-    (void)userdata;
     if (eol == 1)
         return ;
-    set_volume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100));
+    set_volume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), ((void **)userData)[0], ((void **)userData)[1]);
     destroy_con();
 }
 
-static void     cb(pa_context *c, void *mainloop) {
+static void     cb(pa_context *c, void *userData) {
     if (pa_context_get_state(c) == PA_CONTEXT_READY) {
-        pa_context_get_sink_info_list(c, &cb_infos, NULL);
+        pa_context_get_sink_info_list(c, &cb_infos, userData);
     }
-    (void)mainloop;
 }
 
-int             create_con(char *appName) {
+int             create_con(char *appName, void *config, void *window) {
     pa_context  *ctx;
+    void        *params[2];
 
+    params[0] = config;
+    params[1] = window;
     if ((loop = pa_mainloop_new()) == NULL)
         return (1);
     if ((ctx = pa_context_new(pa_mainloop_get_api(loop), appName)) == NULL) {
         pa_mainloop_free(loop);
         return (1);
     }
-    pa_context_set_state_callback(ctx, &cb, NULL);
+    pa_context_set_state_callback(ctx, &cb, (void *)params);
     if (pa_context_connect(ctx, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0) {
         pa_mainloop_free(loop);
         return (1);
