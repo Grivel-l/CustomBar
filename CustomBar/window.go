@@ -27,13 +27,12 @@ func initX() (*xgbutil.XUtil, error) {
     return X, nil
 }
 
-func createWindow(X *xgbutil.XUtil, config BarConfig) (Window, error) {
+func createWindow(X *xgbutil.XUtil, config BarConfig) (error) {
     var err     error
-    var window  Window
 
     window.win, err = xwindow.Generate(X)
     if (err != nil) {
-        return window, err
+        return err
     }
     window.win.Create(X.RootWin(),
         config.marginLeft,
@@ -45,8 +44,8 @@ func createWindow(X *xgbutil.XUtil, config BarConfig) (Window, error) {
     window.img = xgraphics.New(X, image.Rect(0, 0, config.width, config.height))
     window.font, err = truetype.Parse(goregular.TTF)
     if (err != nil) {
-        return window, err
+        return err
     }
-    return window, window.img.XSurfaceSet(window.win.Id)
+    return window.img.XSurfaceSet(window.win.Id)
 }
 

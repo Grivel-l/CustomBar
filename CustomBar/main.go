@@ -7,6 +7,7 @@ import "C"
 import (
     "fmt"
     "unsafe"
+    "errors"
     "github.com/BurntSushi/xgbutil"
 )
 
@@ -24,38 +25,40 @@ type Pos struct {
     y   int
 }
 
-//export set_volume
-func set_volume(volume int, config unsafe.Pointer, window unsafe.Pointer) {
-    var win     Window
-    var conf    BarConfig
+var window  Window
 
-    conf = *(*BarConfig)(config)
-    win = *(*Window)(window)
-    fmt.Printf("Volume is: %v, %v, %v\n", volume, conf.height, win.win);
+//export set_volume
+func set_volume(volume int, config unsafe.Pointer) {
+    var conf    *BarConfig
+
+    conf = (*BarConfig)(config)
+    fmt.Printf("Volume is: %v, %v %v\n", volume, conf.height, string(volume));
+    printString(window, string(volume), Pos{x: 1900, y: 0})
 }
 
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
 
-func initPulseAudio(appName string, config *BarConfig, window *Window) {
+func initPulseAudio(appName string, config *BarConfig) (error) {
     var cstring *C.char
 
     cstring = C.CString(appName)
-    C.create_con(cstring, unsafe.Pointer(config), unsafe.Pointer(window))
+    if (C.create_con(cstring, unsafe.Pointer(config)) != 0) {
+        return errors.New("Couldn't init pulseaudio")
+    }
     C.free(unsafe.Pointer(cstring))
+    return nil
 }
 
 func main() {
     var err     error
     var X       *xgbutil.XUtil
-    var window  Window
     var appName string
     var config  BarConfig
 
     appName = "custombar"
     err = fillConfig(appName, &config)
-    initPulseAudio(appName, &config, &window)
     if (err != nil) {
         errorHandler(err)
         return
@@ -65,12 +68,17 @@ func main() {
         errorHandler(err)
         return
     }
-    window, err = createWindow(X, config)
+    err = createWindow(X, config)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    err = setWindowOptions(window.win, config)
+    err = setWindowOptions(config)
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
+    err = initPulseAudio(appName, &config)
     if (err != nil) {
         errorHandler(err)
         return

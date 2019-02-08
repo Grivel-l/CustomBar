@@ -6,8 +6,6 @@
 #include <pulse/pulseaudio.h>
 
 void    destroy_con(void);
-int     create_con(char *appName, void *config, void *window);
-
-typedef void (*FPtr)(void);
+int     create_con(char *appName, void *config);
 
 #endif

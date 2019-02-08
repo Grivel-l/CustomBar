@@ -1,6 +1,6 @@
 #include "palib.h"
 
-extern void set_volume(int volume, void *config, void *window);
+extern void set_volume(int volume, void *config);
 
 pa_mainloop *loop;
 
@@ -13,7 +13,7 @@ static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void
     (void)c;
     if (eol == 1)
         return ;
-    set_volume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), ((void **)userData)[0], ((void **)userData)[1]);
+    set_volume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), userData);
     destroy_con();
 }
 
@@ -23,19 +23,16 @@ static void     cb(pa_context *c, void *userData) {
     }
 }
 
-int             create_con(char *appName, void *config, void *window) {
+int             create_con(char *appName, void *config) {
     pa_context  *ctx;
-    void        *params[2];
 
-    params[0] = config;
-    params[1] = window;
     if ((loop = pa_mainloop_new()) == NULL)
         return (1);
     if ((ctx = pa_context_new(pa_mainloop_get_api(loop), appName)) == NULL) {
         pa_mainloop_free(loop);
         return (1);
     }
-    pa_context_set_state_callback(ctx, &cb, (void *)params);
+    pa_context_set_state_callback(ctx, &cb, config);
     if (pa_context_connect(ctx, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0) {
         pa_mainloop_free(loop);
         return (1);
