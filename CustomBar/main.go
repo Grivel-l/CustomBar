@@ -26,23 +26,23 @@ type Pos struct {
 
 //export set_volume
 func set_volume(volume int, config unsafe.Pointer, window unsafe.Pointer) {
-    var yo  BarConfig
-    var win Window
+    var win     Window
+    var conf    BarConfig
 
-    yo = *(*BarConfig)(config)
+    conf = *(*BarConfig)(config)
     win = *(*Window)(window)
-    fmt.Printf("Volume is: %v, %v, %v\n", volume, yo.height, win.win);
+    fmt.Printf("Volume is: %v, %v, %v\n", volume, conf.height, win.win);
 }
 
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
 
-func initPulseAudio(appName string, config BarConfig, window Window) {
+func initPulseAudio(appName string, config *BarConfig, window *Window) {
     var cstring *C.char
 
     cstring = C.CString(appName)
-    C.create_con(cstring, unsafe.Pointer(&config), unsafe.Pointer(&window))
+    C.create_con(cstring, unsafe.Pointer(config), unsafe.Pointer(window))
     C.free(unsafe.Pointer(cstring))
 }
 
@@ -55,7 +55,7 @@ func main() {
 
     appName = "custombar"
     err = fillConfig(appName, &config)
-    initPulseAudio(appName, config, window)
+    initPulseAudio(appName, &config, &window)
     if (err != nil) {
         errorHandler(err)
         return
