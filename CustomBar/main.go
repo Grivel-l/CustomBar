@@ -1,14 +1,7 @@
 package main
 
-// #include "./palib.h"
-// #cgo pkg-config: libpulse
-import "C"
-
 import (
     "fmt"
-    "unsafe"
-    "errors"
-    /* "strconv" */
     "github.com/BurntSushi/xgbutil"
 )
 
@@ -28,25 +21,8 @@ type Pos struct {
 
 var window  Window
 
-//export set_volume
-func set_volume(volume int, config unsafe.Pointer) {
-    fmt.Printf("Volume is: %v\n", volume);
-    /* printString(window, strconv.Itoa(volume), Pos{x: 1800, y: 0}) */
-}
-
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
-}
-
-func initPulseAudio(appName string, config *BarConfig) (error) {
-    var cstring *C.char
-
-    cstring = C.CString(appName)
-    if (C.create_con(cstring, unsafe.Pointer(config)) != 0) {
-        return errors.New("Couldn't init pulseaudio")
-    }
-    C.free(unsafe.Pointer(cstring))
-    return nil
 }
 
 func main() {
@@ -81,7 +57,7 @@ func main() {
         errorHandler(err)
         return
     }
-    printString(window, "HelloWorld", Pos{x: 0, y: 0})
+    printString("wrapper", "HelloWorld", Pos{x: 0, y: 0})
     window.win.Map()
     for {}
 }
