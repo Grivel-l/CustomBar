@@ -18,4 +18,5 @@ func printString(window Window, content string, pos Pos) (error) {
     }
     window.img.XDraw()
     window.img.XPaint(window.win.Id)
+    return nil
 }
