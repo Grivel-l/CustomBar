@@ -8,6 +8,7 @@ import (
     "fmt"
     "unsafe"
     "errors"
+    /* "strconv" */
     "github.com/BurntSushi/xgbutil"
 )
 
@@ -29,11 +30,8 @@ var window  Window
 
 //export set_volume
 func set_volume(volume int, config unsafe.Pointer) {
-    var conf    *BarConfig
-
-    conf = (*BarConfig)(config)
-    fmt.Printf("Volume is: %v, %v %v\n", volume, conf.height, string(volume));
-    printString(window, string(volume), Pos{x: 1900, y: 0})
+    fmt.Printf("Volume is: %v\n", volume);
+    /* printString(window, strconv.Itoa(volume), Pos{x: 1800, y: 0}) */
 }
 
 func errorHandler(err error) {
