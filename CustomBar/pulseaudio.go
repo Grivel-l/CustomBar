@@ -28,11 +28,11 @@ func initPulseAudio(appName string, config *BarConfig) (error) {
     var cstring *C.char
 
     cstring = C.CString(appName)
-    if (C.create_con(cstring, unsafe.Pointer(config)) != 0) {
+    if (C.create_con(cstring, nil) != 0) {
         return errors.New("Couldn't init pulseaudio")
     }
     C.free(unsafe.Pointer(cstring))
-   window.img["volume"]  = xgraphics.New(window.win.X, image.Rect(0, 0, config.width, config.height))
+   window.img["volume"] = xgraphics.New(window.win.X, image.Rect(0, 0, config.width, config.height))
     return window.img["volume"].XSurfaceSet(window.win.Id)
 }
 
