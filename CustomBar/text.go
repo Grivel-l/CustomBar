@@ -3,15 +3,31 @@ package main
 import (
     /* "fmt" */
     "image/color"
+    "github.com/BurntSushi/xgbutil/xgraphics"
 )
 
-func printString(img string, content string, pos Pos) (error) {
+func printString(textType string, content string) (error) {
+    var x   int
+    var y   int
     var err error
 
-    window.img[img].ForExp(func(x int, y int) (r, g, b, a uint8) {
-        return 0, 0, 0, 0
-    })
-    _, _, err = window.img[img].Text(pos.x, pos.y, color.RGBA{
+    if (window.pos[textType].xEnd != -1) {
+        x = window.pos[textType].xStart
+        for (x < window.pos[textType].xEnd) {
+            y = 0
+            for (y < 40) {
+                window.img.SetBGRA(x, y, xgraphics.BGRA{
+                    B: 0,
+                    G: 0,
+                    R: 0,
+                    A: 0,
+                })
+                y += 1
+            }
+            x += 1
+        }
+    }
+    window.pos[textType].xEnd, _, err = window.img.Text(window.pos[textType].xStart, 0, color.RGBA{
         R: 0xff,
         G: 0xff,
         B: 0xff,
@@ -20,7 +36,7 @@ func printString(img string, content string, pos Pos) (error) {
     if (err != nil) {
         return err
     }
-    window.img[img].XDraw()
-    window.img[img].XPaint(window.win.Id)
+    window.img.XDraw()
+    window.img.XPaint(window.win.Id)
     return nil
 }

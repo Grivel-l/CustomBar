@@ -57,7 +57,11 @@ func main() {
         errorHandler(err)
         return
     }
-    printString("wrapper", "HelloWorld", Pos{x: 0, y: 0})
+    window.pos["wrapper"] = &TextPos{
+        xStart: 0,
+        xEnd: -1,
+    }
+    printString("wrapper", "HelloWorld")
     window.win.Map()
     for {}
 }

@@ -64,6 +64,7 @@ int             create_con(char *appName, void *config) {
     // Check error here
     pa_context_set_subscribe_callback(ctx, event_cb, params[0]);
     pa_threaded_mainloop_unlock(loop);
+    pa_context_get_sink_info_list(ctx, cb_infos, params[1]);
     return (0);
 }
 

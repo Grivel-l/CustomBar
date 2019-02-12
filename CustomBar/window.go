@@ -10,10 +10,16 @@ import (
     "github.com/BurntSushi/freetype-go/freetype/truetype"
 )
 
+type TextPos struct {
+    xStart  int
+    xEnd    int
+}
+
 type Window struct {
     win     *xwindow.Window
-    img     map[string]*xgraphics.Image
+    img     *xgraphics.Image
     font    *truetype.Font
+    pos     map[string]*TextPos
 }
 
 func initX() (*xgbutil.XUtil, error) {
@@ -30,7 +36,6 @@ func initX() (*xgbutil.XUtil, error) {
 func createWindow(X *xgbutil.XUtil, config BarConfig) (error) {
     var err     error
 
-    window.img = make(map[string]*xgraphics.Image)
     window.win, err = xwindow.Generate(X)
     if (err != nil) {
         return err
@@ -42,11 +47,12 @@ func createWindow(X *xgbutil.XUtil, config BarConfig) (error) {
         config.height,
         xproto.CwBackPixel,
         0x0)
-    window.img["wrapper"] = xgraphics.New(X, image.Rect(0, 0, config.width, config.height))
+    window.pos = make(map[string]*TextPos)
+    window.img = xgraphics.New(X, image.Rect(0, 0, config.width, config.height))
     window.font, err = truetype.Parse(goregular.TTF)
     if (err != nil) {
         return err
     }
-    return window.img["wrapper"].XSurfaceSet(window.win.Id)
+    return window.img.XSurfaceSet(window.win.Id)
 }
 
