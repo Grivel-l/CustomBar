@@ -14,7 +14,7 @@ import (
 //export set_volume
 func set_volume(volume int, config unsafe.Pointer) {
     fmt.Printf("Volume is: %v\n", volume)
-    text.SetText(strconv.Itoa(volume))
+    texts["audio"].SetText(strconv.Itoa(volume))
 }
 
 func initPulseAudio(appName string, config *BarConfig) (error) {
@@ -25,6 +25,7 @@ func initPulseAudio(appName string, config *BarConfig) (error) {
         return errors.New("Couldn't init pulseaudio")
     }
     C.free(unsafe.Pointer(cstring))
+    initAudio()
     return nil
 }
 
