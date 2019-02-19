@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
 )
 
@@ -23,6 +24,8 @@ func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
 
+var text    *widgets.QLabel
+
 func main() {
     var err     error
     var app     *widgets.QApplication
@@ -37,11 +40,15 @@ func main() {
         return
     }
     app, widget = initWindow(config)
-    widget.Layout()
     err = initPulseAudio(appName, &config)
     if (err != nil) {
         errorHandler(err)
         return
     }
+    text = widgets.NewQLabel(nil, 0)
+    text.SetText("HelloWorld")
+    text.SetAlignment(core.Qt__AlignRight)
+    text.SetStyleSheet("color: white")
+    widget.Layout().AddWidget(text)
     app.Exec()
 }

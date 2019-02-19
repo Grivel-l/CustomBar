@@ -8,18 +8,13 @@ import (
     "fmt"
     "unsafe"
     "errors"
+    "strconv"
 )
 
 //export set_volume
 func set_volume(volume int, config unsafe.Pointer) {
-    /* var err error */
-
     fmt.Printf("Volume is: %v\n", volume)
-    /* err = printString("volume", strconv.Itoa(volume)) */
-    /* if (err != nil) { */
-    /*     fmt.Printf("Error: %v\n", err) */
-    /* } */
-    return
+    text.SetText(strconv.Itoa(volume))
 }
 
 func initPulseAudio(appName string, config *BarConfig) (error) {
