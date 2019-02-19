@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/BurntSushi/xgbutil"
+    "github.com/therecipe/qt/widgets"
 )
 
 type BarConfig struct {
@@ -19,15 +19,14 @@ type Pos struct {
     y   int
 }
 
-var window  Window
-
 func errorHandler(err error) {
     fmt.Printf("An error occured: %v\n", err)
 }
 
 func main() {
     var err     error
-    var X       *xgbutil.XUtil
+    var app     *widgets.QApplication
+    var widget  *widgets.QWidget
     var appName string
     var config  BarConfig
 
@@ -37,31 +36,12 @@ func main() {
         errorHandler(err)
         return
     }
-    X, err = initX()
-    if (err != nil) {
-        errorHandler(err)
-        return
-    }
-    err = createWindow(X, config)
-    if (err != nil) {
-        errorHandler(err)
-        return
-    }
-    err = setWindowOptions(config)
-    if (err != nil) {
-        errorHandler(err)
-        return
-    }
+    app, widget = initWindow(config)
+    widget.Layout()
     err = initPulseAudio(appName, &config)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    window.pos["wrapper"] = &TextPos{
-        xStart: 0,
-        xEnd: -1,
-    }
-    printString("wrapper", "HelloWorld")
-    window.win.Map()
-    for {}
+    app.Exec()
 }
