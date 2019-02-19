@@ -35,12 +35,13 @@ func main() {
         return
     }
     app, widget = initWindow(config)
+    initDate()
     err = initPulseAudio(appName, &config)
     if (err != nil) {
         errorHandler(err)
         return
     }
+    widget.Layout().AddWidget(texts["time"])
     widget.Layout().AddWidget(texts["audio"])
-    fmt.Printf("HelloWorld")
     app.Exec()
 }
