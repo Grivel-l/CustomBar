@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "github.com/therecipe/qt/gui"
     "github.com/therecipe/qt/widgets"
 )
 
@@ -12,6 +13,7 @@ type BarConfig struct {
     marginRight int
     marginLeft  int
     opacity     float64
+    fontSize    int
 }
 
 func errorHandler(err error) {
@@ -19,6 +21,14 @@ func errorHandler(err error) {
 }
 
 var texts    map[string]*widgets.QLabel
+
+func initConfigs(app *widgets.QApplication, config BarConfig) {
+    var font    *gui.QFont
+
+    font = gui.NewQFont()
+    font.SetPixelSize(config.fontSize)
+    app.SetFont(font, "")
+}
 
 func main() {
     var err     error
@@ -35,6 +45,7 @@ func main() {
         return
     }
     app, widget = initWindow(config)
+    initConfigs(app, config)
     initDate()
     err = initPulseAudio(appName, &config)
     if (err != nil) {

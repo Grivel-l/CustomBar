@@ -33,6 +33,8 @@ func handleLine(line string, config *BarConfig) (error) {
             config.width, err = strconv.Atoi(value)
         case "opacity":
             config.opacity, err = strconv.ParseFloat(value, 64)
+        case "font-size":
+            config.fontSize, err = strconv.Atoi(value)
     }
     return err
 }
@@ -44,6 +46,7 @@ func defaultConfig(config *BarConfig) {
     config.marginLeft = 0
     config.marginRight = 0
     config.opacity = 0.7
+    config.fontSize = 16
 }
 
 func fillConfig(appName string, config *BarConfig) (error) {
