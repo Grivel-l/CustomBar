@@ -9,7 +9,7 @@ import (
 func initDate() {
     texts["time"] = widgets.NewQLabel(nil, 0)
     texts["time"].SetAlignment(core.Qt__AlignCenter)
-    texts["time"].SetStyleSheet("color: white")
+    texts["time"].SetStyleSheet("color: white; background-color: red")
     printDate()
 }
 

@@ -41,7 +41,6 @@ func main() {
         errorHandler(err)
         return
     }
-    widget.Layout().AddWidget(texts["time"])
-    widget.Layout().AddWidget(texts["audio"])
+    createLayout(widget)
     app.Exec()
 }
