@@ -31,11 +31,11 @@ func initConfigs(app *widgets.QApplication, config BarConfig) {
 }
 
 func main() {
-    var err     error
-    var app     *widgets.QApplication
-    var widget  *widgets.QWidget
-    var appName string
-    var config  BarConfig
+    var err         error
+    var app         *widgets.QApplication
+    var widget      *widgets.QWidget
+    var appName     string
+    var config      BarConfig
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
@@ -48,6 +48,11 @@ func main() {
     initConfigs(app, config)
     initDate()
     err = initPulseAudio(appName, &config)
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
+    err = initWorkspaces(config)
     if (err != nil) {
         errorHandler(err)
         return

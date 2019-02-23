@@ -31,7 +31,7 @@ func createLayout(widget *widgets.QWidget) {
     box[0] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[1] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[2] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
-    box[0].AddWidget(widgets.NewQLabel(nil, 0), 0, 0)
+    box[0].AddWidget(texts["workspace0"], 0, 0)
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)
     grid.AddLayout(box[0], 0, 0, 0)
