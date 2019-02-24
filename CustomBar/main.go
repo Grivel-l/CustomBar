@@ -57,6 +57,11 @@ func main() {
         errorHandler(err)
         return
     }
+    err = initPower()
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
     createLayout(widget)
     app.Exec()
 }
