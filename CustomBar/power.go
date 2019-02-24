@@ -11,6 +11,13 @@ import (
     "github.com/therecipe/qt/widgets"
 )
 
+func updatePower(remaining int, max int) {
+    var percentage  int
+
+    percentage = int(float32(remaining) / float32(max) * 100)
+    texts["power"].SetText(strconv.Itoa(percentage))
+}
+
 func listenEvents(max int) {
     var remaining   int
     var err         error
@@ -21,7 +28,11 @@ func listenEvents(max int) {
         log.Println(err)
     }
     remaining, err = strconv.Atoi(strings.Trim(string(content), "\n"))
+    if (err != nil) {
+        log.Println(err)
+    }
     fmt.Printf("Remaining: %v, Max: %v\n", remaining, max)
+    updatePower(remaining, max)
     time.AfterFunc(60000000000, func() {listenEvents(max)})
 }
 
@@ -33,7 +44,6 @@ func initPower() (error) {
     texts["power"] = widgets.NewQLabel(nil, 0)
     texts["power"].SetAlignment(core.Qt__AlignRight)
     texts["power"].SetStyleSheet("color: white; background-color: blue")
-    texts["power"].SetText("HelloWorld")
     content, err = ioutil.ReadFile("/sys/class/power_supply/BAT1/charge_full")
     if (err != nil) {
         return err

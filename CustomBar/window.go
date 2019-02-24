@@ -34,6 +34,7 @@ func createLayout(widget *widgets.QWidget) {
     box[0].AddWidget(texts["workspace0"], 0, 0)
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)
+    box[2].AddWidget(texts["power"], 0, 0)
     grid.AddLayout(box[0], 0, 0, 0)
     grid.AddLayout(box[1], 0, 1, 0)
     grid.AddLayout(box[2], 0, 2, 0)
