@@ -8,9 +8,21 @@ import (
     "github.com/BurntSushi/xgbutil/ewmh"
 )
 
-func getWorkspaces() (uint, error) {
-    var err     error
-    var xutil   *xgbutil.XUtil
+func getWorkspaces() ([]string, error) {
+    var err         error
+    var xutil       *xgbutil.XUtil
+    var desktops    []string
+
+    xutil, err = xgbutil.NewConn()
+    if (err != nil) {
+        return desktops, err
+    }
+    return ewmh.DesktopNamesGet(xutil)
+}
+
+func getWorkspacesNbr() (uint, error) {
+    var err    error
+    var xutil  *xgbutil.XUtil
 
     xutil, err = xgbutil.NewConn()
     if (err != nil) {
@@ -20,16 +32,16 @@ func getWorkspaces() (uint, error) {
 }
 
 func initWorkspaces(config BarConfig) (error) {
-    var i       uint
-    var nbr     uint
-    var err     error
-    var name    strings.Builder
+    var i           int
+    var err         error
+    var desktops    []string
+    var name        strings.Builder
 
-    nbr, err = getWorkspaces()
+    desktops, err = getWorkspaces()
     if (err != nil) {
         return err
     }
-    for i = 0; i < nbr; i += 1 {
+    for i = 0; i < len(desktops); i += 1 {
         _, err = name.WriteString("workspace")
         if (err != nil) {
             return err
@@ -40,8 +52,8 @@ func initWorkspaces(config BarConfig) (error) {
         }
         texts[name.String()] = widgets.NewQLabel(nil, 0)
         texts[name.String()].SetAlignment(core.Qt__AlignLeft)
-        texts[name.String()].SetStyleSheet("color: white; background-color: yellow")
-        texts[name.String()].SetText("yo")
+        texts[name.String()].SetStyleSheet("color: white; background-color: black")
+        texts[name.String()].SetText(desktops[i])
         name.Reset()
     }
     return nil
