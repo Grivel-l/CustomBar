@@ -52,7 +52,7 @@ func createLayout(widget *widgets.QWidget) (error) {
         }
         box[0].AddWidget(texts[tmp.String()], 0, 0)
         tmp.Reset()
-        j += 1
+        j++
     }
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)

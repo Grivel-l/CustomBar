@@ -69,10 +69,10 @@ func fillConfig(appName string, config *BarConfig) (error) {
         return err
     }
     lines = strings.Split(string(content), "\n")
-    for i = 0; i < len(lines); i += 1 {
+    for i = 0; i < len(lines); i++ {
         err = handleLine(lines[i], config)
         if (err != nil) {
-            return errors.New(fmt.Sprintf("Bad value at line %v of config file: %v", i + 1, strings.TrimSpace(strings.Split(lines[i], "=")[1])))
+            return fmt.Errorf("Bad value at line %v of config file: %v", i + 1, strings.TrimSpace(strings.Split(lines[i], "=")[1]))
         }
     }
     return nil

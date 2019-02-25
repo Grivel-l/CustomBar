@@ -6,6 +6,7 @@ import (
     "github.com/therecipe/qt/widgets"
 )
 
+// BarConfig export
 type BarConfig struct {
     height      int
     width       int

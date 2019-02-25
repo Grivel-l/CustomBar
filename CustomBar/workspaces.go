@@ -41,7 +41,7 @@ func initWorkspaces(config BarConfig) (error) {
     if (err != nil) {
         return err
     }
-    for i = 0; i < len(desktops); i += 1 {
+    for i = 0; i < len(desktops); i++ {
         _, err = name.WriteString("workspace")
         if (err != nil) {
             return err
