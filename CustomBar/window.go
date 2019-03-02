@@ -56,7 +56,9 @@ func createLayout(widget *widgets.QWidget) (error) {
     }
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)
-    box[2].AddWidget(texts["power"], 0, 0)
+    if (texts["power"] != nil) {
+        box[2].AddWidget(texts["power"], 0, 0)
+    }
     grid.AddLayout(box[0], 0, 0, 0)
     grid.AddLayout(box[1], 0, 1, 0)
     grid.AddLayout(box[2], 0, 2, 0)

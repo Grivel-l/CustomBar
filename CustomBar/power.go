@@ -1,6 +1,7 @@
 package main
 
 import (
+     "os"
     "log"
     "fmt"
     "time"
@@ -41,6 +42,11 @@ func initPower() (error) {
     var err     error
     var content []byte
 
+    _, err = os.Stat("/sys/class/power_supply/BAT1/charge_full")
+    if (os.IsNotExist(err)) {
+        return nil
+    }
+    err = nil
     texts["power"] = widgets.NewQLabel(nil, 0)
     texts["power"].SetAlignment(core.Qt__AlignRight)
     texts["power"].SetStyleSheet("color: white; background-color: blue")
