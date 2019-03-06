@@ -1,12 +1,20 @@
 package main
 
+import "C"
+
 import (
+    "fmt"
     "strings"
     "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
     "github.com/BurntSushi/xgbutil/ewmh"
 )
+
+//export updateWorkspace
+func updateWorkspace() {
+    fmt.Printf("Changing workspace")
+}
 
 func getWorkspaces() ([]string, error) {
     var err         error
@@ -52,7 +60,11 @@ func initWorkspaces(config BarConfig) (error) {
         }
         texts[name.String()] = widgets.NewQLabel(nil, 0)
         texts[name.String()].SetAlignment(core.Qt__AlignLeft)
-        texts[name.String()].SetStyleSheet("color: white; background-color: black")
+        if (i == 0) {
+            texts[name.String()].SetStyleSheet("color: white; background-color: green")
+        } else {
+            texts[name.String()].SetStyleSheet("color: white; background-color: black")
+        }
         texts[name.String()].SetText(desktops[i])
         name.Reset()
     }

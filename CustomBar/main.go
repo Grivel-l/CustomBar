@@ -1,5 +1,9 @@
 package main
 
+// #include "./events.h"
+// #cgo pkg-config: x11
+import "C"
+
 import (
     "fmt"
     "github.com/therecipe/qt/gui"
@@ -63,6 +67,7 @@ func main() {
         errorHandler(err)
         return
     }
+    go C.listenClientEvents()
     createLayout(widget)
     app.Exec()
 }
