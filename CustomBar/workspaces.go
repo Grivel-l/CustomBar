@@ -3,17 +3,54 @@ package main
 import "C"
 
 import (
+    "os"
     "fmt"
-    "strings"
     "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
     "github.com/BurntSushi/xgbutil/ewmh"
 )
 
+func createWorkspaceWidget(name string) {
+    texts[name] = widgets.NewQLabel(nil, 0)
+    texts[name].SetText(name)
+    texts[name].SetAlignment(core.Qt__AlignLeft)
+    texts[name].SetStyleSheet("color: white; background-color: black")
+}
+
 //export updateWorkspace
 func updateWorkspace() {
-    fmt.Printf("Changing workspace")
+    var i           int
+    var current     uint
+    var err         error
+    var workspaces  []string
+    var xutil       *xgbutil.XUtil
+
+    workspaces, err = getWorkspaces()
+    if (err != nil) {
+        fmt.Fprintf(os.Stderr, err.Error())
+        return
+    }
+    xutil, err = xgbutil.NewConn()
+    if (err != nil) {
+        fmt.Fprintf(os.Stderr, err.Error())
+        return
+    }
+    current, err = ewmh.CurrentDesktopGet(xutil)
+    if (err != nil) {
+        fmt.Fprintf(os.Stderr, err.Error())
+        return
+    }
+    for i = 0; i < len(workspaces); i++ {
+        if (uint(i) == current) {
+            if (texts[workspaces[i]] == nil) {
+                createWorkspaceWidget(workspaces[i])
+            }
+            texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
+        } else {
+            texts[workspaces[i]].SetStyleSheet("color: white; background-color: black")
+        }
+    }
 }
 
 func getWorkspaces() ([]string, error) {
@@ -42,31 +79,14 @@ func getWorkspacesNbr() (uint, error) {
 func initWorkspaces(config BarConfig) (error) {
     var i           int
     var err         error
-    var desktops    []string
-    var name        strings.Builder
+    var workspaces  []string
 
-    desktops, err = getWorkspaces()
+    workspaces, err = getWorkspaces()
     if (err != nil) {
         return err
     }
-    for i = 0; i < len(desktops); i++ {
-        _, err = name.WriteString("workspace")
-        if (err != nil) {
-            return err
-        }
-        err = name.WriteByte(byte(i + 48))
-        if (err != nil) {
-            return err
-        }
-        texts[name.String()] = widgets.NewQLabel(nil, 0)
-        texts[name.String()].SetAlignment(core.Qt__AlignLeft)
-        if (i == 0) {
-            texts[name.String()].SetStyleSheet("color: white; background-color: green")
-        } else {
-            texts[name.String()].SetStyleSheet("color: white; background-color: black")
-        }
-        texts[name.String()].SetText(desktops[i])
-        name.Reset()
+    for i = 0; i < len(workspaces); i++ {
+        createWorkspaceWidget(workspaces[i])
     }
     return nil
 }

@@ -2,7 +2,6 @@ package main
 
 import (
     "os"
-    "strings"
     "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
 )
@@ -25,14 +24,13 @@ func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
 }
 
 func createLayout(widget *widgets.QWidget) (error) {
-    var i       uint
-    var j       uint
-    var err     error
-    var tmp     strings.Builder
-    var grid    *widgets.QGridLayout
-    var box     [3]*widgets.QBoxLayout
+    var i           int
+    var err         error
+    var workspaces  []string
+    var grid        *widgets.QGridLayout
+    var box         [3]*widgets.QBoxLayout
 
-    i, err = getWorkspacesNbr()
+    workspaces, err = getWorkspaces()
     if (err != nil) {
         return err
     }
@@ -40,19 +38,8 @@ func createLayout(widget *widgets.QWidget) (error) {
     box[0] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[1] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[2] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
-    j = 0
-    for (j < i) {
-        _, err = tmp.WriteString("workspace")
-        if (err != nil) {
-            return err
-        }
-        err = tmp.WriteByte(byte(j + 48))
-        if (err != nil) {
-            return err
-        }
-        box[0].AddWidget(texts[tmp.String()], 0, 0)
-        tmp.Reset()
-        j++
+    for i = 0; i < len(workspaces); i++ {
+        box[0].AddWidget(texts[workspaces[i]], 0, 0)
     }
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)

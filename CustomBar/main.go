@@ -5,6 +5,7 @@ package main
 import "C"
 
 import (
+    "os"
     "fmt"
     "github.com/therecipe/qt/gui"
     "github.com/therecipe/qt/widgets"
@@ -22,7 +23,7 @@ type BarConfig struct {
 }
 
 func errorHandler(err error) {
-    fmt.Printf("An error occured: %v\n", err)
+    fmt.Fprintf(os.Stderr, "An error occured: %v\n", err)
 }
 
 var texts    map[string]*widgets.QLabel
