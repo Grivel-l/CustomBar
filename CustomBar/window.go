@@ -3,7 +3,9 @@ package main
 import (
     "os"
     "github.com/therecipe/qt/core"
+    "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
+    "github.com/BurntSushi/xgbutil/ewmh"
 )
 
 func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
@@ -23,14 +25,14 @@ func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
     return app, widget
 }
 
-func createLayout(widget *widgets.QWidget) (error) {
+func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     var i           int
     var err         error
     var workspaces  []string
     var grid        *widgets.QGridLayout
     var box         [3]*widgets.QBoxLayout
 
-    workspaces, err = getWorkspaces()
+    workspaces, err = ewmh.DesktopNamesGet(xutil)
     if (err != nil) {
         return err
     }

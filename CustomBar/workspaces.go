@@ -26,12 +26,12 @@ func updateWorkspace() {
     var workspaces  []string
     var xutil       *xgbutil.XUtil
 
-    workspaces, err = getWorkspaces()
+    xutil, err = xgbutil.NewConn()
     if (err != nil) {
         fmt.Fprintf(os.Stderr, err.Error())
         return
     }
-    xutil, err = xgbutil.NewConn()
+    workspaces, err = ewmh.DesktopNamesGet(xutil)
     if (err != nil) {
         fmt.Fprintf(os.Stderr, err.Error())
         return
@@ -53,18 +53,6 @@ func updateWorkspace() {
     }
 }
 
-func getWorkspaces() ([]string, error) {
-    var err         error
-    var xutil       *xgbutil.XUtil
-    var desktops    []string
-
-    xutil, err = xgbutil.NewConn()
-    if (err != nil) {
-        return desktops, err
-    }
-    return ewmh.DesktopNamesGet(xutil)
-}
-
 func getWorkspacesNbr() (uint, error) {
     var err    error
     var xutil  *xgbutil.XUtil
@@ -76,17 +64,23 @@ func getWorkspacesNbr() (uint, error) {
     return ewmh.NumberOfDesktopsGet(xutil)
 }
 
-func initWorkspaces(config BarConfig) (error) {
+func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
     var i           int
+    var current     uint
     var err         error
     var workspaces  []string
 
-    workspaces, err = getWorkspaces()
+    workspaces, err = ewmh.DesktopNamesGet(xutil)
     if (err != nil) {
         return err
     }
     for i = 0; i < len(workspaces); i++ {
         createWorkspaceWidget(workspaces[i])
     }
+    current, err = ewmh.CurrentDesktopGet(xutil)
+    if (err != nil) {
+        return err
+    }
+    texts[workspaces[current]].SetStyleSheet("color: white; background-color: green")
     return nil
 }

@@ -8,6 +8,7 @@ import (
     "os"
     "fmt"
     "github.com/therecipe/qt/gui"
+    "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
 )
 
@@ -38,13 +39,19 @@ func initConfigs(app *widgets.QApplication, config BarConfig) {
 
 func main() {
     var err         error
-    var app         *widgets.QApplication
-    var widget      *widgets.QWidget
     var appName     string
     var config      BarConfig
+    var xutil       *xgbutil.XUtil
+    var app         *widgets.QApplication
+    var widget      *widgets.QWidget
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
+    xutil, err = xgbutil.NewConn()
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
     err = fillConfig(appName, &config)
     if (err != nil) {
         errorHandler(err)
@@ -58,7 +65,7 @@ func main() {
         errorHandler(err)
         return
     }
-    err = initWorkspaces(config)
+    err = initWorkspaces(config, xutil)
     if (err != nil) {
         errorHandler(err)
         return
@@ -69,6 +76,6 @@ func main() {
         return
     }
     go C.listenClientEvents()
-    createLayout(widget)
+    createLayout(widget, xutil)
     app.Exec()
 }
