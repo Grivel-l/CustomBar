@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include <X11/Xlib.h>
 
-int     listenClientEvents(void);
+int     listenClientEvents(void *widget, void *xutil, void *signals, void *app);
 
 #endif

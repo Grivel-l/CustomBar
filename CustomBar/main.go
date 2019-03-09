@@ -7,7 +7,9 @@ import "C"
 import (
     "os"
     "fmt"
+    "unsafe"
     "github.com/therecipe/qt/gui"
+    "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
 )
@@ -21,6 +23,20 @@ type BarConfig struct {
     marginLeft  int
     opacity     float64
     fontSize    int
+}
+
+type Signals struct {
+    core.QObject
+        _ func() `constructor:"init"`
+        _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string) `slot:"addWidget"`
+}
+
+func (s *Signals) init() {
+    s.ConnectAddWidget(func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string) {
+        createWorkspaceWidget(name)
+        widget.Layout().ItemAt(0).Layout().AddWidget(texts[name])
+        app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
+    })
 }
 
 func errorHandler(err error) {
@@ -40,6 +56,7 @@ func initConfigs(app *widgets.QApplication, config BarConfig) {
 func main() {
     var err         error
     var appName     string
+    var signals     *Signals
     var config      BarConfig
     var xutil       *xgbutil.XUtil
     var app         *widgets.QApplication
@@ -47,6 +64,8 @@ func main() {
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
+    go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app))
+    signals = NewSignals(nil)
     xutil, err = xgbutil.NewConn()
     if (err != nil) {
         errorHandler(err)
@@ -75,7 +94,6 @@ func main() {
         errorHandler(err)
         return
     }
-    go C.listenClientEvents()
     createLayout(widget, xutil)
     app.Exec()
 }
