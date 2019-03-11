@@ -22,8 +22,7 @@ func (s *Signals) init() {
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
     })
     s.ConnectAddWorkspace(func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int) {
-        layout := widget.Layout().ItemAt(0).Layout()
-        layout.AddWidget(texts[workspaces[i]])
+        widget.Layout().ItemAt(0).Layout().AddWidget(texts[workspaces[i]])
         if (i == current) {
             texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
         } else {
@@ -34,6 +33,7 @@ func (s *Signals) init() {
     })
     s.ConnectHideFirstChild(func(widget *widgets.QWidget) {
         var item    *widgets.QWidget
+        var layout  *widgets.QLayout
 
         layout = widget.Layout().ItemAt(0).Layout()
         item = layout.ItemAt(0).Widget()
