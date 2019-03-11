@@ -45,38 +45,18 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
         fmt.Fprintf(os.Stderr, err.Error())
         return
     }
-    layout := widget.Layout().ItemAt(0).Layout()
-    for (!layout.IsEmpty()) {
-        fmt.Printf("Removing...\n")
-        layout.RemoveItem(layout.TakeAt(0))
+    for (!widget.Layout().ItemAt(0).Layout().IsEmpty()) {
+        signals.HideFirstChild(widget)
     }
-    if (texts[workspaces[current]] == nil) {
-        fmt.Printf("Creating new widget\n")
-        for i = 0; i < len(workspaces); i++ {
-            if (texts[workspaces[i]] != nil) {
-                layout.AddWidget(texts[workspaces[i]])
-                texts[workspaces[i]].SetStyleSheet("color: white; background-color: black")
-            } else {
-                loop = core.NewQEventLoop(nil)
-                signals.AddWidget(app, widget, loop, workspaces[i])
-                loop.Exec(core.QEventLoop__AllEvents)
-                texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
-            }
+    for i = 0; i < len(workspaces); i++ {
+        loop = core.NewQEventLoop(nil)
+        if (texts[workspaces[i]] != nil) {
+            signals.AddWorkspace(app, loop, workspaces, widget, i, int(current))
+        } else {
+            signals.AddWidget(app, widget, loop, workspaces[i])
         }
-    } else {
-        fmt.Printf("All widgets already exist\n")
-        for i = 0; i < len(workspaces); i++ {
-            layout.AddWidget(texts[workspaces[i]])
-            if (uint(i) == current) {
-                fmt.Printf("%v to green\n", workspaces[i])
-                texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
-            } else {
-                fmt.Printf("%v to black\n", workspaces[i])
-                texts[workspaces[i]].SetStyleSheet("color: white; background-color: black")
-            }
-        }
+        loop.Exec(core.QEventLoop__AllEvents)
     }
-
 }
 
 func getWorkspacesNbr() (uint, error) {
@@ -103,8 +83,6 @@ func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
     for i = 0; i < len(workspaces); i++ {
         createWorkspaceWidget(workspaces[i])
     }
-    current, err = ewmh.NumberOfDesktopsGet(xutil)
-    fmt.Printf("Nbr of desktops: %v\n", current)
     current, err = ewmh.CurrentDesktopGet(xutil)
     if (err != nil) {
         return err
