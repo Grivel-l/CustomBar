@@ -33,12 +33,12 @@ func (s *Signals) init() {
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
     })
     s.ConnectHideFirstChild(func(widget *widgets.QWidget) {
-        var layout  *widgets.QLayout
+        var item    *widgets.QWidget
 
         layout = widget.Layout().ItemAt(0).Layout()
-        yo:= layout.ItemAt(0).Widget()
-        yo.Hide()
-        layout.RemoveWidget(yo)
+        item = layout.ItemAt(0).Widget()
+        item.Hide()
+        layout.RemoveWidget(item)
     })
 }
 
