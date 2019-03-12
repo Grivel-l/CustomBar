@@ -1,6 +1,7 @@
 package main
 
 // #include "./events.h"
+// #include "./tray.h"
 // #cgo pkg-config: x11
 import "C"
 
@@ -77,6 +78,9 @@ func main() {
     err = initPower()
     if (err != nil) {
         errorHandler(err)
+        return
+    }
+    if (C.createTrayManager() != 0) {
         return
     }
     createLayout(widget, xutil)

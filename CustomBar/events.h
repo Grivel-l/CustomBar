@@ -1,5 +1,5 @@
-#ifndef PALIB_H
-#define PALIB_H
+#ifndef EVENTS_H
+#define EVENTS_H
 
 #include <stdio.h>
 #include <X11/Xlib.h>
