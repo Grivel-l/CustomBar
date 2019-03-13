@@ -80,9 +80,7 @@ func main() {
         errorHandler(err)
         return
     }
-    if (C.createTrayManager() != 0) {
-        return
-    }
+    go C.createTrayManager()
     createLayout(widget, xutil)
     app.Exec()
 }
