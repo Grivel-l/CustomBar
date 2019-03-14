@@ -36,12 +36,12 @@ static int  handleEvent(Display *disp, XEvent event, Window window) {
                     dprintf(1, "Error during docking\n");
                     return (1);
                 }
-                dprintf(1, "Sleeping...\n");
-                sleep(5);
-                XUnmapWindow(disp, (Window)(event.xclient.data.l[2]));
-                XReparentWindow(disp, (Window)(event.xclient.data.l[2]), RootWindow(disp, 0), 0, 0);
-                XDestroyWindow(disp, (Window)(event.xclient.data.l[2]));
-                dprintf(1, "Destroyed window\n");
+                XMoveResizeWindow(disp, (Window)(event.xclient.data.l[2]), 0, 0, 100, 100);
+                XMapRaised(disp, (Window)(event.xclient.data.l[2]));
+                XFlush(disp);
+                /* XUnmapWindow(disp, (Window)(event.xclient.data.l[2])); */
+                /* XReparentWindow(disp, (Window)(event.xclient.data.l[2]), RootWindow(disp, 0), 0, 0); */
+                /* XDestroyWindow(disp, (Window)(event.xclient.data.l[2])); */
             } else if ((int)(event.xclient.data.l[1]) == SYSTEM_TRAY_BEGIN_MESSAGE) {
                 dprintf(1, "Beginning message\n");
             } else if ((int)(event.xclient.data.l[1]) == SYSTEM_TRAY_CANCEL_MESSAGE) {
@@ -83,9 +83,11 @@ int     createTrayManager(void) {
     if (XMapWindow(disp, window) == BadWindow) {
         return (1);
     }
-    XNextEvent(disp, &event);
-    if (handleEvent(disp, event, window) == 1)
-        return (1);
+    while (1) {
+        XNextEvent(disp, &event);
+        if (handleEvent(disp, event, window) == 1)
+            return (1);
+    }
     XSetSelectionOwner(disp, trayManager, None, timestamp);
     XUnmapWindow(disp, window);
     XDestroyWindow(disp, window);
