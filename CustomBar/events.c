@@ -21,8 +21,6 @@ int         listenClientEvents(void *widget, void *xutil, void *signals, void *a
         XNextEvent(disp, &event);
         if (event.xproperty.atom == currentDesktop)
             updateWorkspace(widget, xutil, signals, app);
-        else
-            dprintf(1, "Unknown event received...\n");
     }
     XCloseDisplay(disp);
     return (0);
