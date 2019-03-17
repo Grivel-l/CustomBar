@@ -1,97 +1,110 @@
 #include "./tray.h"
-#include <X11/Xatom.h>
-#include <unistd.h>
 
-static int  sendEvent(Display *disp, Window window, Atom trayManager) {
-    XEvent  event;
-    Atom    manager;
+// TODO Better error handling
+static xcb_atom_t   getAtom(xcb_connection_t *conn, const char *name) {
+    xcb_generic_error_t     *error;
+    xcb_intern_atom_reply_t *reply;
 
-    if ((manager = XInternAtom(disp, "MANAGER", False)) == None)
+    reply = xcb_intern_atom_reply(conn, xcb_intern_atom(conn, 0, strlen(name), name), &error);
+    if (error != NULL) {
+        dprintf(1, "Couldn't get %s atom\n", name);
         return (1);
-    event.xclient.type = ClientMessage;
-    event.xclient.display = disp;
-    event.xclient.window = window;
-    event.xclient.format = 32;
-    event.xclient.message_type = manager;
-    event.xclient.data.l[0] = CurrentTime;
-    event.xclient.data.l[1] = trayManager;
-    event.xclient.data.l[2] = window;
-    XSendEvent(disp, RootWindow(disp, 0), False, StructureNotifyMask, &event);
-    return (0);
-}
-
-static int  handleEvent(Display *disp, XEvent event, Window window) {
-    int     ret;
-    Atom    opcode;
-
-    if ((opcode = XInternAtom(disp, "_NET_SYSTEM_TRAY_OPCODE", False)) == None)
-        return (1);
-    if (event.type == ClientMessage) {
-        if (event.xclient.message_type == opcode && event.xclient.format == 32) {
-            dprintf(1, "Opcode received\n");
-            if ((int)(event.xclient.data.l[1]) == SYSTEM_TRAY_REQUEST_DOCK) {
-                dprintf(1, "Requesting dock\n");
-                ret = XReparentWindow(disp, (Window)(event.xclient.data.l[2]), window, 0, 0);
-                if (ret == BadMatch || ret == BadWindow) {
-                    dprintf(1, "Error during docking\n");
-                    return (1);
-                }
-                XMoveResizeWindow(disp, (Window)(event.xclient.data.l[2]), 0, 0, 100, 100);
-                XMapRaised(disp, (Window)(event.xclient.data.l[2]));
-                XFlush(disp);
-                /* XUnmapWindow(disp, (Window)(event.xclient.data.l[2])); */
-                /* XReparentWindow(disp, (Window)(event.xclient.data.l[2]), RootWindow(disp, 0), 0, 0); */
-                /* XDestroyWindow(disp, (Window)(event.xclient.data.l[2])); */
-            } else if ((int)(event.xclient.data.l[1]) == SYSTEM_TRAY_BEGIN_MESSAGE) {
-                dprintf(1, "Beginning message\n");
-            } else if ((int)(event.xclient.data.l[1]) == SYSTEM_TRAY_CANCEL_MESSAGE) {
-                dprintf(1, "Cancelling message\n");
-            }
-        }
-        dprintf(1, "Client message received\n");
-        dprintf(1, "Atom name: %s\n", XGetAtomName(disp, event.xclient.message_type));
     }
-    dprintf(1, "Event received by tray %i\n", event.type);
+    return reply->atom;
+}
+
+static xcb_window_t getSelectionOwner(xcb_connection_t *conn, xcb_atom_t trayManager) {
+    xcb_generic_error_t             *error;
+    xcb_get_selection_owner_reply_t *reply;
+
+    reply = xcb_get_selection_owner_reply(conn, xcb_get_selection_owner(conn, trayManager), &error);
+    if (error != NULL) {
+        dprintf(1, "Couldn't get tray owner. Error code: %i\n", error->error_code);
+        return (XCB_NONE);
+    }
+    return reply->owner;
+}
+
+static xcb_window_t createWindow(xcb_connection_t *conn, xcb_screen_t *screen) {
+    xcb_window_t    window;
+    uint32_t        value[2];
+
+    window = xcb_generate_id(conn);
+    value[0] = screen->black_pixel;
+    xcb_create_window(conn, XCB_COPY_FROM_PARENT, window, screen->root, 0, 0, 1, 1, 0, XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, XCB_CW_EVENT_MASK | XCB_CW_BACK_PIXEL, value);
+    return window;
+}
+
+static int  notifySelection(xcb_connection_t *conn, xcb_screen_t *screen,
+                xcb_window_t window, xcb_atom_t trayManager) {
+    xcb_client_message_event_t  event;
+    xcb_atom_t                  manager;
+
+    event.format = 32;
+    event.type = getAtom(conn, "MANAGER");
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.data.data32[0] = XCB_CURRENT_TIME;
+    event.data.data32[1] = trayManager;
+    event.data.data32[2] = window;
+    event.data.data32[3] = 0;
+    event.data.data32[4] = 0;
+    xcb_send_event(conn, 0, screen->root, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *)(&event));
+}
+
+static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clientMessage, xcb_atom_t opcode, xcb_window_t window, size_t *i) {
+    dprintf(1, "ClientMessage received: Format: %i, AtomType: %i\n", clientMessage->type, clientMessage->type);
+    if (clientMessage->format == 32 && clientMessage->type == opcode) {
+        dprintf(1, "Requesting dock\n");
+        xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * 20, 0);
+        xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){20, 20});
+        xcb_configure_window(conn, window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){20 * (*i + 1), 20});
+        xcb_map_window(conn, clientMessage->data.data32[2]);
+        xcb_flush(conn);
+        *i += 1;
+    }
     return (0);
 }
 
-// TODO RootWindow(disp, 0) should send to RootWindow(disp, DefaultScreen())
 int     createTrayManager(void) {
-    Display             *disp;
-    XEvent              event;
-    Window              window;
-    Atom                trayManager;
-    Time                timestamp;
+    size_t              i;
+    xcb_connection_t    *conn;
+    xcb_generic_event_t *event;
+    xcb_window_t        window;
+    xcb_atom_t          opcode;
+    xcb_screen_t        *screen;
+    xcb_atom_t          trayManager;
+    xcb_client_message_event_t  *clientMessage;
 
-    if ((disp = XOpenDisplay(NULL)) == NULL)
-        return (1);
-    if ((trayManager = XInternAtom(disp, "_NET_SYSTEM_TRAY_S0", False)) == None)
-        return (1);
-    window = XCreateSimpleWindow(disp, RootWindow(disp, 0), 0, 0, 1, 1, 0, XBlackPixel(disp, 0), XBlackPixel(disp, 0));
-    if (XGetSelectionOwner(disp, trayManager) != None) {
-        dprintf(1, "Tray manager already have an owner\n");
-        return (2);
+    conn = xcb_connect(NULL, NULL);
+    opcode = getAtom(conn, "_NET_SYSTEM_TRAY_OPCODE");
+    trayManager = getAtom(conn, "_NET_SYSTEM_TRAY_S0");
+    screen = xcb_setup_roots_iterator(xcb_get_setup(conn)).data;
+    window = createWindow(conn, screen);
+    xcb_atom_t yo;
+    yo = getAtom(conn, "_NET_WM_STATE_MODAL");
+    xcb_change_property(conn, XCB_PROP_MODE_APPEND, window, getAtom(conn, "_NET_WM_STATE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&yo));
+    yo = getAtom(conn, "_NET_WM_STATE_SKIP_TASKBAR");
+    xcb_change_property(conn, XCB_PROP_MODE_APPEND, window, getAtom(conn, "_NET_WM_STATE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&yo));
+    yo = getAtom(conn, "_NET_WM_ACTION_ABOVE");
+    xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, getAtom(conn, "_NET_WM_ALLOWED_ACTIONS"), XCB_ATOM_WM_HINTS, 32, 1, (const void *)(&yo));
+    if (getSelectionOwner(conn, trayManager) != XCB_NONE) {
+        dprintf(1, "Tray already have an owner\n");
     }
-    timestamp = CurrentTime;
-    XSetSelectionOwner(disp, trayManager, window, timestamp);
-    XSelectInput(disp, window, NoEventMask);
-    if (XGetSelectionOwner(disp, trayManager) == window) {
-        dprintf(1, "Tray owned !\n");
-        if (sendEvent(disp, window, trayManager) == 1)
-            return (1);
+    xcb_set_selection_owner(conn, window, trayManager, XCB_CURRENT_TIME);
+    if (getSelectionOwner(conn, trayManager) == window) {
+        dprintf(1, "Tray successfully owned\n");
+        notifySelection(conn, screen, window, trayManager);
     }
-    if (XMapWindow(disp, window) == BadWindow) {
-        return (1);
+    xcb_map_window(conn, window);
+    xcb_flush(conn);
+    dprintf(1, "Listening for events...\n");
+    i = 0;
+    while ((event = xcb_wait_for_event(conn)) != NULL) {
+        if (XCB_EVENT_RESPONSE_TYPE(event) == XCB_CLIENT_MESSAGE) {
+            handleEvent(conn, (xcb_client_message_event_t *)event, opcode, window, &i);
+        }
+        free(event);
     }
-    while (1) {
-        XNextEvent(disp, &event);
-        if (handleEvent(disp, event, window) == 1)
-            return (1);
-    }
-    XSetSelectionOwner(disp, trayManager, None, timestamp);
-    XUnmapWindow(disp, window);
-    XDestroyWindow(disp, window);
-    XCloseDisplay(disp);
     return (0);
 }
 

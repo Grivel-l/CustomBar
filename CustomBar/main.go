@@ -2,7 +2,7 @@ package main
 
 // #include "./events.h"
 // #include "./tray.h"
-// #cgo pkg-config: x11
+// #cgo pkg-config: x11 xcb xcb-util
 import "C"
 
 import (
