@@ -13,5 +13,6 @@
 int createTrayManager(void);
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
+#define SCREEN_MAX_WIDTH            1920
 
 #endif
