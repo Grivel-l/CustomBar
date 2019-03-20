@@ -49,7 +49,7 @@ func initPower() (error) {
     err = nil
     texts["power"] = widgets.NewQLabel(nil, 0)
     texts["power"].SetAlignment(core.Qt__AlignRight)
-    texts["power"].SetStyleSheet("color: white; background-color: blue")
+    texts["power"].SetStyleSheet("color: white")
     content, err = ioutil.ReadFile("/sys/class/power_supply/BAT1/charge_full")
     if (err != nil) {
         return err

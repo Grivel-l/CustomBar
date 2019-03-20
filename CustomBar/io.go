@@ -45,7 +45,7 @@ func defaultConfig(config *BarConfig) {
     config.marginTop = 0
     config.marginLeft = 0
     config.marginRight = 0
-    config.opacity = 0.6
+    config.opacity = 0.7
     config.fontSize = 16
 }
 
