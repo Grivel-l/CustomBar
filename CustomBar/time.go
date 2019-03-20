@@ -1,7 +1,9 @@
 package main
 
 import (
+    "fmt"
     "time"
+    "strings"
     "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
 )
@@ -17,6 +19,7 @@ func printDate(signals *Signals) {
     var tmp         int
     var timestamp   time.Time
     var parsed      [5]byte
+    var builder     strings.Builder
 
     timestamp = time.Now()
     tmp = timestamp.Hour()
@@ -26,7 +29,8 @@ func printDate(signals *Signals) {
     tmp = timestamp.Minute()
     parsed[3] = byte(tmp / 10 + 48)
     parsed[4] = byte(tmp % 10 + 48)
-    signals.UpdateWidget("time", string(parsed[:]))
+    fmt.Fprintf(&builder, "%v %v %v, %v", timestamp.Weekday().String()[:3], timestamp.Day(), timestamp.Month().String(), string(parsed[:]))
+    signals.UpdateWidget("time", builder.String())
     tmp = timestamp.Second()
     time.AfterFunc(time.Duration((60 - tmp) * 1000000000), func() {printDate(signals)})
 }

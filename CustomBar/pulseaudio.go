@@ -5,7 +5,6 @@ package main
 import "C"
 
 import (
-    "fmt"
     "unsafe"
     "errors"
     "strconv"
@@ -16,7 +15,6 @@ func set_volume(volume int, signalsP unsafe.Pointer) {
     var signals *Signals
 
     signals = *(**Signals)(signalsP)
-    fmt.Printf("Updating audio with: %v...\n", strconv.Itoa(volume))
     signals.UpdateWidget("audio", strconv.Itoa(volume))
 }
 
