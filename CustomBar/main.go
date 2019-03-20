@@ -51,7 +51,6 @@ func main() {
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
     go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app))
-    signals = NewSignals(nil)
     xutil, err = xgbutil.NewConn()
     if (err != nil) {
         errorHandler(err)
@@ -65,7 +64,7 @@ func main() {
     app, widget = initWindow(config)
     initConfigs(app, config)
     initDate()
-    err = initPulseAudio(appName, &config)
+    err = initPulseAudio(appName, unsafe.Pointer(&signals))
     if (err != nil) {
         errorHandler(err)
         return
@@ -81,6 +80,7 @@ func main() {
         return
     }
     go C.createTrayManager()
+    signals = NewSignals(nil)
     createLayout(widget, xutil)
     app.Exec()
 }
