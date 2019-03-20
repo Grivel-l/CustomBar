@@ -27,7 +27,7 @@ func (s *Signals) init() {
         if (i == current) {
             texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
         } else {
-            texts[workspaces[i]].SetStyleSheet("color: white; background-color: black")
+            texts[workspaces[i]].SetStyleSheet("color: white")
         }
         texts[workspaces[i]].Show()
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))

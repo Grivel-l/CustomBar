@@ -17,7 +17,7 @@ func createWorkspaceWidget(name string) {
     texts[name].SetText(name)
     texts[name].SetMinimumWidth(40)
     texts[name].SetAlignment(core.Qt__AlignHCenter | core.Qt__AlignVCenter)
-    texts[name].SetStyleSheet("color: white; background-color: black")
+    texts[name].SetStyleSheet("color: white")
 }
 
 //export updateWorkspace

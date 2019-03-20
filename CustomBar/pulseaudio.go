@@ -8,14 +8,18 @@ import (
     "unsafe"
     "errors"
     "strconv"
+    "strings"
 )
 
 //export set_volume
 func set_volume(volume int, signalsP unsafe.Pointer) {
     var signals *Signals
+    var builder strings.Builder
 
+    builder.WriteString(strconv.Itoa(volume))
+    builder.WriteByte('%')
     signals = *(**Signals)(signalsP)
-    signals.UpdateWidget("audio", strconv.Itoa(volume))
+    signals.UpdateWidget("audio", builder.String())
 }
 
 func initPulseAudio(appName string, signals unsafe.Pointer) (error) {

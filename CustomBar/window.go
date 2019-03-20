@@ -9,16 +9,16 @@ import (
 )
 
 func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
-    var app     *widgets.QApplication
     var widget  *widgets.QWidget
+    var app     *widgets.QApplication
 
     app = widgets.NewQApplication(len(os.Args), os.Args)
     widget = widgets.NewQWidget(nil, 0)
     widget.SetMinimumSize2(config.width, config.height)
     widget.SetMaximumSize2(config.width, config.height)
     widget.SetAttribute(core.Qt__WA_X11NetWmWindowTypeDock, true)
-    widget.SetWindowOpacity(config.opacity)
-    widget.SetStyleSheet("background-color: black")
+    widget.SetAttribute(core.Qt__WA_TranslucentBackground, true)
+    widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
     widget.Show()
     return app, widget
 }
@@ -36,6 +36,7 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     }
     grid = widgets.NewQGridLayout2()
     grid.SetContentsMargins(0, 0, 0, 0)
+    grid.SetSpacing(0)
     box[0] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[0].SetSpacing(0)
     box[1] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
@@ -54,6 +55,7 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     grid.SetAlignment2(box[0], core.Qt__AlignLeft)
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
+    widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
     return nil
 }
 
