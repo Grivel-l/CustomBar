@@ -15,7 +15,8 @@ import (
 func createWorkspaceWidget(name string) {
     texts[name] = widgets.NewQLabel(nil, 0)
     texts[name].SetText(name)
-    texts[name].SetAlignment(core.Qt__AlignLeft)
+    texts[name].SetMinimumWidth(40)
+    texts[name].SetAlignment(core.Qt__AlignHCenter | core.Qt__AlignVCenter)
     texts[name].SetStyleSheet("color: white; background-color: black")
 }
 

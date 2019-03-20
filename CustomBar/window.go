@@ -35,7 +35,9 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
         return err
     }
     grid = widgets.NewQGridLayout2()
+    grid.SetContentsMargins(0, 0, 0, 0)
     box[0] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
+    box[0].SetSpacing(0)
     box[1] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     box[2] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
     for i = 0; i < len(workspaces); i++ {
@@ -49,6 +51,7 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     grid.AddLayout(box[0], 0, 0, 0)
     grid.AddLayout(box[1], 0, 1, 0)
     grid.AddLayout(box[2], 0, 2, 0)
+    grid.SetAlignment2(box[0], core.Qt__AlignLeft)
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
     return nil
