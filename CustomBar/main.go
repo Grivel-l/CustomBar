@@ -63,11 +63,6 @@ func main() {
     }
     app, widget = initWindow(config)
     initConfigs(app, config)
-    err = initPulseAudio(appName, unsafe.Pointer(&signals))
-    if (err != nil) {
-        errorHandler(err)
-        return
-    }
     err = initWorkspaces(config, xutil)
     if (err != nil) {
         errorHandler(err)
@@ -80,6 +75,11 @@ func main() {
     }
     go C.createTrayManager()
     signals = NewSignals(nil)
+    err = initPulseAudio(appName, unsafe.Pointer(signals))
+    if (err != nil) {
+        errorHandler(err)
+        return
+    }
     initDate(signals)
     createLayout(widget, xutil)
     app.Exec()
