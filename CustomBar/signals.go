@@ -12,7 +12,7 @@ type Signals struct {
         _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string) `slot:"addWidget"`
         _ func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int) `slot:"addWorkspace"`
         _ func(widget *widgets.QWidget) `slot:"hideFirstChild"`
-        _ func(volume string) `slot:"updateVolume"`
+        _ func(name string, volume string) `slot:"updateWidget"`
 }
 
 func (s *Signals) init() {
@@ -41,8 +41,8 @@ func (s *Signals) init() {
         item.Hide()
         layout.RemoveWidget(item)
     })
-    s.ConnectUpdateVolume(func(volume string) {
-        texts["audio"].SetText(volume)
+    s.ConnectUpdateWidget(func(name string, text string) {
+        texts[name].SetText(text)
     })
 }
 

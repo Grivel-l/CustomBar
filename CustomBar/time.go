@@ -6,14 +6,14 @@ import (
     "github.com/therecipe/qt/widgets"
 )
 
-func initDate() {
+func initDate(signals *Signals) {
     texts["time"] = widgets.NewQLabel(nil, 0)
     texts["time"].SetAlignment(core.Qt__AlignCenter)
     texts["time"].SetStyleSheet("color: white; background-color: red")
-    printDate()
+    printDate(signals)
 }
 
-func printDate() {
+func printDate(signals *Signals) {
     var tmp         int
     var timestamp   time.Time
     var parsed      [5]byte
@@ -26,7 +26,7 @@ func printDate() {
     tmp = timestamp.Minute()
     parsed[3] = byte(tmp / 10 + 48)
     parsed[4] = byte(tmp % 10 + 48)
-    texts["time"].SetText(string(parsed[:]))
+    signals.UpdateWidget("time", string(parsed[:]))
     tmp = timestamp.Second()
-    time.AfterFunc(time.Duration((60 - tmp) * 1000000000), printDate)
+    time.AfterFunc(time.Duration((60 - tmp) * 1000000000), func() {printDate(signals)})
 }
