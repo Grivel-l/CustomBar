@@ -23,6 +23,15 @@ func (s *Signals) init() {
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
     })
     s.ConnectAddWorkspace(func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int) {
+        var filler  *widgets.QWidget
+
+        if (i == -1 && current == -1) {
+            filler = widgets.NewQWidget(nil, 0)
+            filler.SetSizePolicy(widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__DefaultType))
+            widget.Layout().ItemAt(0).Layout().AddWidget(filler)
+            app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
+            return
+        }
         widget.Layout().ItemAt(0).Layout().AddWidget(texts[workspaces[i]])
         if (i == current) {
             texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")

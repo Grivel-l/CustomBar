@@ -58,6 +58,8 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
         }
         loop.Exec(core.QEventLoop__AllEvents)
     }
+    signals.AddWorkspace(app, loop, workspaces, widget, -1, -1)
+    loop.Exec(core.QEventLoop__AllEvents)
 }
 
 func getWorkspacesNbr() (uint, error) {
