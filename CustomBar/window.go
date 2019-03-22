@@ -46,13 +46,16 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     }
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(texts["audio"], 0, 0)
+    texts["audio"].SetContentsMargins(10, 0, 10, 0)
     if (texts["power"] != nil) {
         box[2].AddWidget(texts["power"], 0, 0)
+        texts["power"].SetContentsMargins(10, 0, 10, 0)
     }
     grid.AddLayout(box[0], 0, 0, 0)
     grid.AddLayout(box[1], 0, 1, 0)
     grid.AddLayout(box[2], 0, 2, 0)
     grid.SetAlignment2(box[0], core.Qt__AlignLeft)
+    grid.SetAlignment2(box[2], core.Qt__AlignRight)
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
     widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
