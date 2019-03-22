@@ -2,6 +2,8 @@ package main
 
 import (
     "os"
+    "strings"
+    "strconv"
     "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
@@ -23,10 +25,11 @@ func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
     return app, widget
 }
 
-func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
+func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config BarConfig) (error) {
     var i           int
     var err         error
     var workspaces  []string
+    var builder     strings.Builder
     var grid        *widgets.QHBoxLayout
     var box         [3]*widgets.QHBoxLayout
 
@@ -60,7 +63,10 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     grid.SetAlignment2(box[2], core.Qt__AlignRight)
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
-    widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
+    builder.WriteString("background-color: rgba(0, 0, 0, ")
+    builder.WriteString(strconv.Itoa(int(config.opacity * 255 / 100)))
+    builder.WriteByte(')')
+    widget.SetStyleSheet(builder.String())
     return nil
 }
 

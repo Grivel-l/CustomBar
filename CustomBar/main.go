@@ -81,6 +81,6 @@ func main() {
         return
     }
     initDate(signals)
-    createLayout(widget, xutil)
+    createLayout(widget, xutil, config)
     app.Exec()
 }
