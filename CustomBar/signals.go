@@ -9,20 +9,20 @@ import (
 type Signals struct {
     core.QObject
         _ func() `constructor:"init"`
-        _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string) `slot:"addWidget"`
-        _ func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int) `slot:"addWorkspace"`
+        _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string) `slot:"addWidget"`
+        _ func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int, stylesheet string) `slot:"addWorkspace"`
         _ func(widget *widgets.QWidget) `slot:"hideFirstChild"`
         _ func(name string, volume string) `slot:"updateWidget"`
 }
 
 func (s *Signals) init() {
-    s.ConnectAddWidget(func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string) {
+    s.ConnectAddWidget(func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string) {
         createWorkspaceWidget(name)
         widget.Layout().ItemAt(0).Layout().AddWidget(texts[name])
-        texts[name].SetStyleSheet("color: white; background-color: green")
+        texts[name].SetStyleSheet(stylesheet)
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))
     })
-    s.ConnectAddWorkspace(func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int) {
+    s.ConnectAddWorkspace(func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int, stylesheet string) {
         var filler  *widgets.QWidget
 
         if (i == -1 && current == -1) {
@@ -34,7 +34,7 @@ func (s *Signals) init() {
         }
         widget.Layout().ItemAt(0).Layout().AddWidget(texts[workspaces[i]])
         if (i == current) {
-            texts[workspaces[i]].SetStyleSheet("color: white; background-color: green")
+            texts[workspaces[i]].SetStyleSheet(stylesheet)
         } else {
             texts[workspaces[i]].SetStyleSheet("color: white")
         }

@@ -1,6 +1,6 @@
 #include "events.h"
 
-extern void updateWorkspace(void *widget, void *xutil, void *signals, void *app);
+extern void updateWorkspace(void *widget, void *xutil, void *signals, void *app, void *config);
 
 static int  listenWorkspaces(Display *disp) {
     if (XSelectInput(disp, RootWindow(disp, 0), PropertyChangeMask) == BadWindow)
@@ -8,7 +8,7 @@ static int  listenWorkspaces(Display *disp) {
     return XInternAtom(disp, "_NET_CURRENT_DESKTOP", False);
 }
 
-int         listenClientEvents(void *widget, void *xutil, void *signals, void *app) {
+int         listenClientEvents(void *widget, void *xutil, void *signals, void *app, void *config) {
     XEvent  event;
     Display *disp;
     Atom    currentDesktop;
@@ -20,7 +20,7 @@ int         listenClientEvents(void *widget, void *xutil, void *signals, void *a
     while (1) {
         XNextEvent(disp, &event);
         if (event.xproperty.atom == currentDesktop)
-            updateWorkspace(widget, xutil, signals, app);
+            updateWorkspace(widget, xutil, signals, app, config);
     }
     XCloseDisplay(disp);
     return (0);

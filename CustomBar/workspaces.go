@@ -6,6 +6,7 @@ import (
     "os"
     "fmt"
     "unsafe"
+    "strings"
     "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
@@ -20,13 +21,23 @@ func createWorkspaceWidget(name string) {
     texts[name].SetStyleSheet("color: white")
 }
 
+func getStylesheet(color string) (string) {
+    var builder strings.Builder
+
+    builder.WriteString("color: white; background-color: ")
+    builder.WriteString(color)
+    return builder.String()
+}
+
 //export updateWorkspace
-func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP unsafe.Pointer, appP unsafe.Pointer) {
+func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP unsafe.Pointer, appP unsafe.Pointer, configP unsafe.Pointer) {
     var i           int
     var current     uint
     var err         error
+    var stylesheet  string
     var workspaces  []string
     var signals     *Signals
+    var config      BarConfig
     var xutil       *xgbutil.XUtil
     var widget      *widgets.QWidget
     var loop        *core.QEventLoop
@@ -37,6 +48,8 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
     xutil = *(**xgbutil.XUtil)(xutilP)
     widget = *(**widgets.QWidget)(widgetP)
     workspaces, err = ewmh.DesktopNamesGet(xutil)
+    config = *(*BarConfig)(configP)
+    stylesheet = getStylesheet(config.currentWorkspace)
     if (err != nil) {
         fmt.Fprintf(os.Stderr, err.Error())
         return
@@ -52,13 +65,13 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
     for i = 0; i < len(workspaces); i++ {
         loop = core.NewQEventLoop(nil)
         if (texts[workspaces[i]] != nil) {
-            signals.AddWorkspace(app, loop, workspaces, widget, i, int(current))
+            signals.AddWorkspace(app, loop, workspaces, widget, i, int(current), stylesheet)
         } else {
-            signals.AddWidget(app, widget, loop, workspaces[i])
+            signals.AddWidget(app, widget, loop, workspaces[i], stylesheet)
         }
         loop.Exec(core.QEventLoop__AllEvents)
     }
-    signals.AddWorkspace(app, loop, workspaces, widget, -1, -1)
+    signals.AddWorkspace(app, loop, workspaces, widget, -1, -1, stylesheet)
     loop.Exec(core.QEventLoop__AllEvents)
 }
 
@@ -78,6 +91,7 @@ func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
     var current     uint
     var err         error
     var workspaces  []string
+    var builder     strings.Builder
 
     workspaces, err = ewmh.DesktopNamesGet(xutil)
     if (err != nil) {
@@ -90,6 +104,8 @@ func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
     if (err != nil) {
         return err
     }
-    texts[workspaces[current]].SetStyleSheet("color: white; background-color: green")
+    builder.WriteString("color: white; background-color: ")
+    builder.WriteString(config.currentWorkspace)
+    texts[workspaces[current]].SetStyleSheet(builder.String())
     return nil
 }

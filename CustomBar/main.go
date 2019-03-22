@@ -16,13 +16,14 @@ import (
 
 // BarConfig export
 type BarConfig struct {
-    height      int
-    width       int
-    marginTop   int
-    marginRight int
-    marginLeft  int
-    opacity     float64
-    fontSize    int
+    height              int
+    width               int
+    marginTop           int
+    marginRight         int
+    marginLeft          int
+    fontSize            int
+    currentWorkspace    string
+    opacity             float64
 }
 
 func errorHandler(err error) {
@@ -50,7 +51,7 @@ func main() {
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
-    go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app))
+    go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app), unsafe.Pointer(&config))
     xutil, err = xgbutil.NewConn()
     if (err != nil) {
         errorHandler(err)
