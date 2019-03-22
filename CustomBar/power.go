@@ -13,10 +13,11 @@ import (
 )
 
 func updatePower(remaining int, max int) {
-    var percentage  int
+    var builder     strings.Builder
 
-    percentage = int(float32(remaining) / float32(max) * 100)
-    texts["power"].SetText(strconv.Itoa(percentage))
+    builder.WriteString(strconv.Itoa(int(float32(remaining) / float32(max) * 100)))
+    builder.WriteByte('%')
+    texts["power"].SetText(builder.String())
 }
 
 func listenEvents(max int) {
