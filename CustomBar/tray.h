@@ -10,9 +10,8 @@
 #include <xcb/xcb_event.h>
 #include <xcb/xcb_ewmh.h>
 
-int createTrayManager(void);
+int createTrayManager(size_t width, size_t height);
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
-#define SCREEN_MAX_WIDTH            1920
 
 #endif

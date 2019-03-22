@@ -74,7 +74,7 @@ func main() {
         errorHandler(err)
         return
     }
-    go C.createTrayManager()
+    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height))
     signals = NewSignals(nil)
     err = initPulseAudio(appName, unsafe.Pointer(signals))
     if (err != nil) {
