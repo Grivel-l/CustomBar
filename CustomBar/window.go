@@ -27,33 +27,35 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil) (error) {
     var i           int
     var err         error
     var workspaces  []string
-    var grid        *widgets.QGridLayout
-    var box         [3]*widgets.QBoxLayout
+    var grid        *widgets.QHBoxLayout
+    var box         [3]*widgets.QHBoxLayout
 
     workspaces, err = ewmh.DesktopNamesGet(xutil)
     if (err != nil) {
         return err
     }
-    grid = widgets.NewQGridLayout2()
+    grid = widgets.NewQHBoxLayout()
     grid.SetContentsMargins(0, 0, 0, 0)
     grid.SetSpacing(0)
-    box[0] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
+    box[0] = widgets.NewQHBoxLayout()
     box[0].SetSpacing(0)
-    box[1] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
-    box[2] = widgets.NewQBoxLayout(widgets.QBoxLayout__LeftToRight, nil)
+    box[1] = widgets.NewQHBoxLayout()
+    box[2] = widgets.NewQHBoxLayout()
     for i = 0; i < len(workspaces); i++ {
         box[0].AddWidget(texts[workspaces[i]], 0, 0)
     }
+    box[0].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
     box[1].AddWidget(texts["time"], 0, 0)
+    box[2].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
     box[2].AddWidget(texts["audio"], 0, 0)
     texts["audio"].SetContentsMargins(10, 0, 10, 0)
     if (texts["power"] != nil) {
         box[2].AddWidget(texts["power"], 0, 0)
         texts["power"].SetContentsMargins(10, 0, 10, 0)
     }
-    grid.AddLayout(box[0], 0, 0, 0)
-    grid.AddLayout(box[1], 0, 1, 0)
-    grid.AddLayout(box[2], 0, 2, 0)
+    grid.AddLayout(box[0], 1)
+    grid.AddLayout(box[1], 1)
+    grid.AddLayout(box[2], 1)
     grid.SetAlignment2(box[0], core.Qt__AlignLeft)
     grid.SetAlignment2(box[2], core.Qt__AlignRight)
     widget.SetLayout(grid)
