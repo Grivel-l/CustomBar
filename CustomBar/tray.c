@@ -56,8 +56,8 @@ static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clie
         clientMessage->type == opcode &&
         (int)(clientMessage->data.data32[1]) == SYSTEM_TRAY_REQUEST_DOCK) {
         xcb_configure_window(conn, window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_WIDTH, (uint32_t[]){width - (*i + 1) * height, height * (*i + 1)});
-        xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * 20, 0);
-        xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){20, 20});
+        xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * height, 0);
+        xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){height, height});
         xcb_map_window(conn, clientMessage->data.data32[2]);
         xcb_flush(conn);
         *i += 1;
