@@ -11,8 +11,8 @@ import (
     "strings"
 )
 
-//export set_volume
-func set_volume(volume int, signalsP unsafe.Pointer) {
+//export setVolume
+func setVolume(volume int, signalsP unsafe.Pointer) {
     var signals *Signals
     var builder strings.Builder
 

@@ -10,7 +10,7 @@
 #include <xcb/xcb_event.h>
 #include <xcb/xcb_ewmh.h>
 
-int createTrayManager(size_t width, size_t height);
+int createTrayManager(size_t width, size_t height, void *layout);
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 

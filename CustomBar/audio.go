@@ -7,6 +7,6 @@ import (
 
 func initAudio() {
     texts["audio"] = widgets.NewQLabel(nil, 0)
-    texts["audio"].SetAlignment(core.Qt__AlignRight)
+    texts["audio"].SetAlignment(core.Qt__AlignCenter)
     texts["audio"].SetStyleSheet("color: white")
 }

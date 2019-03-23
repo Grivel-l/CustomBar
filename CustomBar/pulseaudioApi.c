@@ -1,7 +1,7 @@
 #include "palib.h"
 #include  <stdio.h>
 
-extern void set_volume(int volume, void *signals);
+extern void setVolume(int volume, void *signals);
 
 /* void            destroy_con(void) { */
 /*     pa_threaded_mainloop_stop(loop); */
@@ -11,7 +11,7 @@ extern void set_volume(int volume, void *signals);
 static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void *signals) {
     if (eol == 1)
         return ;
-    set_volume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), signals);
+    setVolume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), signals);
 }
 
 static void     event_cb(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userData) {

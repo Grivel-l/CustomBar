@@ -1,5 +1,7 @@
 #include "./tray.h"
 
+extern void updateMargin(void *layout, size_t size);
+
 // TODO Better error handling
 static xcb_atom_t   getAtom(xcb_connection_t *conn, const char *name) {
     xcb_generic_error_t     *error;
@@ -7,7 +9,7 @@ static xcb_atom_t   getAtom(xcb_connection_t *conn, const char *name) {
 
     reply = xcb_intern_atom_reply(conn, xcb_intern_atom(conn, 0, strlen(name), name), &error);
     if (error != NULL) {
-        dprintf(1, "Couldn't get %s atom\n", name);
+        dprintf(2, "Couldn't get %s atom\n", name);
         return (1);
     }
     return reply->atom;
@@ -19,7 +21,7 @@ static xcb_window_t getSelectionOwner(xcb_connection_t *conn, xcb_atom_t trayMan
 
     reply = xcb_get_selection_owner_reply(conn, xcb_get_selection_owner(conn, trayManager), &error);
     if (error != NULL) {
-        dprintf(1, "Couldn't get tray owner. Error code: %i\n", error->error_code);
+        dprintf(2, "Couldn't get tray owner. Error code: %i\n", error->error_code);
         return (XCB_NONE);
     }
     return reply->owner;
@@ -49,18 +51,17 @@ static int  notifySelection(xcb_connection_t *conn, xcb_screen_t *screen,
     xcb_send_event(conn, 0, screen->root, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *)(&event));
 }
 
-static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clientMessage, xcb_atom_t opcode, xcb_window_t window, size_t *i, size_t width, size_t height) {
-    dprintf(1, "ClientMessage received: Format: %i, AtomType: %i\n", clientMessage->type, clientMessage->type);
+static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clientMessage, xcb_atom_t opcode, xcb_window_t window, size_t *i, size_t width, size_t height, void *layout) {
     if (clientMessage->format == 32 &&
         clientMessage->type == opcode &&
         (int)(clientMessage->data.data32[1]) == SYSTEM_TRAY_REQUEST_DOCK) {
-        dprintf(1, "Requesting dock\n");
         xcb_configure_window(conn, window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_WIDTH, (uint32_t[]){width - (*i + 1) * height, height * (*i + 1)});
         xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * 20, 0);
         xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){20, 20});
         xcb_map_window(conn, clientMessage->data.data32[2]);
         xcb_flush(conn);
         *i += 1;
+        updateMargin(layout, height);
     }
     return (0);
 }
@@ -76,7 +77,7 @@ static void setProperties(xcb_connection_t *conn, xcb_window_t window) {
     xcb_change_property(conn, XCB_PROP_MODE_APPEND, window, getAtom(conn, "_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&atom));
 }
 
-int     createTrayManager(size_t width, size_t height) {
+int     createTrayManager(size_t width, size_t height, void *layout) {
     size_t              i;
     xcb_connection_t    *conn;
     xcb_generic_event_t *event;
@@ -93,22 +94,21 @@ int     createTrayManager(size_t width, size_t height) {
     window = createWindow(conn, screen, height);
     setProperties(conn, window); 
     if (getSelectionOwner(conn, trayManager) != XCB_NONE) {
-        dprintf(1, "Tray already have an owner\n");
+        dprintf(2, "Tray already have an owner\n");
     }
     xcb_set_selection_owner(conn, window, trayManager, XCB_CURRENT_TIME);
     if (getSelectionOwner(conn, trayManager) == window) {
         dprintf(1, "Tray successfully owned\n");
         notifySelection(conn, screen, window, trayManager);
     } else {
-        dprintf(1, "Couldn't get tray\n");
+        dprintf(2, "Couldn't get tray\n");
     }
     xcb_map_window(conn, window);
     xcb_flush(conn);
-    dprintf(1, "Listening for events...\n");
     i = 0;
     while ((event = xcb_wait_for_event(conn)) != NULL) {
         if (XCB_EVENT_RESPONSE_TYPE(event) == XCB_CLIENT_MESSAGE) {
-            handleEvent(conn, (xcb_client_message_event_t *)event, opcode, window, &i, width, height);
+            handleEvent(conn, (xcb_client_message_event_t *)event, opcode, window, &i, width, height, layout);
         }
         free(event);
     }

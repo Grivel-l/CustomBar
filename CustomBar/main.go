@@ -74,7 +74,6 @@ func main() {
         errorHandler(err)
         return
     }
-    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height))
     signals = NewSignals(nil)
     err = initPulseAudio(appName, unsafe.Pointer(signals))
     if (err != nil) {
@@ -83,5 +82,6 @@ func main() {
     }
     initDate(signals)
     createLayout(widget, xutil, config)
+    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()
 }

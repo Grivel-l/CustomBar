@@ -1,7 +1,10 @@
 package main
 
+import "C"
+
 import (
     "os"
+    "unsafe"
     "strings"
     "strconv"
     "github.com/therecipe/qt/core"
@@ -9,6 +12,14 @@ import (
     "github.com/therecipe/qt/widgets"
     "github.com/BurntSushi/xgbutil/ewmh"
 )
+
+//export updateMargin
+func updateMargin(layoutP unsafe.Pointer, size int) {
+    var layout  *widgets.QHBoxLayout
+
+    layout = (*widgets.QHBoxLayout)(layoutP)
+    layout.SetContentsMargins(0, 0, size, 0)
+}
 
 func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
     var widget  *widgets.QWidget
