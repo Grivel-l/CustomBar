@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <xcb/xcb.h>
 #include <xcb/xproto.h>

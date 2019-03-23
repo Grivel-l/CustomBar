@@ -61,7 +61,7 @@ static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clie
         xcb_map_window(conn, clientMessage->data.data32[2]);
         xcb_flush(conn);
         *i += 1;
-        updateMargin(layout, height);
+        updateMargin(layout, height * *i);
     }
     return (0);
 }
@@ -105,6 +105,7 @@ int     createTrayManager(size_t width, size_t height, void *layout) {
     }
     xcb_map_window(conn, window);
     xcb_flush(conn);
+    sleep(1);
     i = 0;
     while ((event = xcb_wait_for_event(conn)) != NULL) {
         if (XCB_EVENT_RESPONSE_TYPE(event) == XCB_CLIENT_MESSAGE) {
