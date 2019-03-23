@@ -6,6 +6,6 @@
 #include <pulse/pulseaudio.h>
 
 void    destroy_con(void);
-void    *create_con(char *appName, void *signals);
+void    *create_con(char *appName, void *signals, char *volumeIcon);
 
 #endif

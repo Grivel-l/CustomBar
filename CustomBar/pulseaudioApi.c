@@ -1,17 +1,22 @@
 #include "palib.h"
 #include  <stdio.h>
 
-extern void setVolume(int volume, void *signals);
+extern void setVolume(int volume, void *signals, void *volumeIcon);
 
 /* void            destroy_con(void) { */
 /*     pa_threaded_mainloop_stop(loop); */
 /*     pa_threaded_mainloop_free(loop); */
+/* free(params); */
 /* } */
 
-static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void *signals) {
-    if (eol == 1)
+static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void *userData) {
+    void    **params;
+
+    params = userData;
+    if (eol == 1) {
         return ;
-    setVolume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), signals);
+    }
+    setVolume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), params[0], params[1]);
 }
 
 static void     event_cb(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userData) {
@@ -28,11 +33,14 @@ static void     state_cb(pa_context *c, void *userData) {
     }
 }
 
-void            *create_con(char *appName, void *signals) {
+void            *create_con(char *appName, void *signals, char *volumeIcon) {
     pa_operation    *op;
     pa_context      *ctx;
+    void            **params;
     pa_threaded_mainloop *loop;
 
+    if ((params = malloc(sizeof(void *) * 2)) == NULL)
+        return (NULL);
     if ((loop = pa_threaded_mainloop_new()) == NULL)
         return (NULL);
     pa_threaded_mainloop_lock(loop);
@@ -57,9 +65,11 @@ void            *create_con(char *appName, void *signals) {
     while (pa_operation_get_state(op) == PA_OPERATION_RUNNING)
         pa_threaded_mainloop_wait(loop);
     // Check error here
-    pa_context_set_subscribe_callback(ctx, event_cb, signals);
+    params[0] = signals;
+    params[1] = volumeIcon;
+    pa_context_set_subscribe_callback(ctx, event_cb, (void *)params);
     pa_threaded_mainloop_unlock(loop);
-    pa_context_get_sink_info_list(ctx, cb_infos, signals);
+    pa_context_get_sink_info_list(ctx, cb_infos, (void *)params);
     return (ctx);
 }
 
