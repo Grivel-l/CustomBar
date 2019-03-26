@@ -22,6 +22,7 @@ type BarConfig struct {
     marginRight         int
     marginLeft          int
     fontSize            int
+    trayPadding         int
     currentWorkspace    string
     opacity             float64
     volumeIcon          string
@@ -83,6 +84,6 @@ func main() {
     }
     initDate(signals)
     createLayout(widget, xutil, config)
-    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), C.ulong(config.opacity), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
+    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), C.ulong(config.opacity), C.ulong(config.trayPadding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()
 }

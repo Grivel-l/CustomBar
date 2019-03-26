@@ -51,13 +51,13 @@ static int  notifySelection(xcb_connection_t *conn, xcb_screen_t *screen,
     xcb_send_event(conn, 0, screen->root, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *)(&event));
 }
 
-static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clientMessage, xcb_atom_t opcode, xcb_window_t window, size_t *i, size_t width, size_t height, void *layout) {
+static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clientMessage, xcb_atom_t opcode, xcb_window_t window, size_t *i, size_t width, size_t height, size_t padding, void *layout) {
     if (clientMessage->format == 32 &&
         clientMessage->type == opcode &&
         (int)(clientMessage->data.data32[1]) == SYSTEM_TRAY_REQUEST_DOCK) {
         xcb_configure_window(conn, window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_WIDTH, (uint32_t[]){width - (*i + 1) * height, height * (*i + 1)});
-        xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * height, 0);
-        xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){height, height});
+        xcb_reparent_window(conn, clientMessage->data.data32[2], window, *i * height + padding, padding);
+        xcb_configure_window(conn, clientMessage->data.data32[2], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, (uint32_t[]){height - padding * 2, height - padding * 2});
         xcb_map_window(conn, clientMessage->data.data32[2]);
         xcb_flush(conn);
         *i += 1;
@@ -80,7 +80,7 @@ static void setProperties(xcb_connection_t *conn, xcb_window_t window, float opa
     xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, getAtom(conn, "_NET_WM_WINDOW_OPACITY"), XCB_ATOM_CARDINAL, 32, 1L, &value);
 }
 
-int     createTrayManager(size_t width, size_t height, size_t opacity, void *layout) {
+int     createTrayManager(size_t width, size_t height, size_t opacity, size_t padding, void *layout) {
     size_t              i;
     xcb_connection_t    *conn;
     xcb_generic_event_t *event;
@@ -112,7 +112,7 @@ int     createTrayManager(size_t width, size_t height, size_t opacity, void *lay
     i = 0;
     while ((event = xcb_wait_for_event(conn)) != NULL) {
         if (XCB_EVENT_RESPONSE_TYPE(event) == XCB_CLIENT_MESSAGE) {
-            handleEvent(conn, (xcb_client_message_event_t *)event, opcode, window, &i, width, height, layout);
+            handleEvent(conn, (xcb_client_message_event_t *)event, opcode, window, &i, width, height, padding, layout);
         }
         free(event);
     }

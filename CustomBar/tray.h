@@ -11,7 +11,7 @@
 #include <xcb/xcb_event.h>
 #include <xcb/xcb_ewmh.h>
 
-int createTrayManager(size_t width, size_t height, size_t opacity, void *layout);
+int createTrayManager(size_t width, size_t height, size_t opacity, size_t padding, void *layout);
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 
