@@ -12,15 +12,17 @@ import (
     "github.com/therecipe/qt/widgets"
 )
 
-func updatePower(remaining int, max int) {
+func updatePower(remaining int, max int, icon string) {
     var builder     strings.Builder
 
+    builder.WriteString(icon)
+    builder.WriteString(" ")
     builder.WriteString(strconv.Itoa(int(float32(remaining) / float32(max) * 100)))
     builder.WriteByte('%')
     texts["power"].SetText(builder.String())
 }
 
-func listenEvents(max int) {
+func listenEvents(max int, icon string) {
     var remaining   int
     var err         error
     var content     []byte
@@ -34,11 +36,11 @@ func listenEvents(max int) {
         log.Println(err)
     }
     fmt.Printf("Remaining: %v, Max: %v\n", remaining, max)
-    updatePower(remaining, max)
-    time.AfterFunc(60000000000, func() {listenEvents(max)})
+    updatePower(remaining, max, icon)
+    time.AfterFunc(60000000000, func() {listenEvents(max, icon)})
 }
 
-func initPower() (error) {
+func initPower(icon string) (error) {
     var max     int
     var err     error
     var content []byte
@@ -59,7 +61,7 @@ func initPower() (error) {
     if (err != nil) {
         return err
     }
-    go listenEvents(max)
+    go listenEvents(max, icon)
     return err
 }
 

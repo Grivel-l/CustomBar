@@ -17,6 +17,7 @@ func setVolume(volume int, signalsP unsafe.Pointer, volumeIcon *C.char) {
     var builder strings.Builder
 
     builder.WriteString(C.GoString(volumeIcon))
+    builder.WriteString(" ")
     builder.WriteString(strconv.Itoa(volume))
     builder.WriteByte('%')
     signals = (*Signals)(signalsP)

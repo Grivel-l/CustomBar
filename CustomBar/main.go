@@ -26,6 +26,7 @@ type BarConfig struct {
     currentWorkspace    string
     opacity             float64
     volumeIcon          string
+    powerIcon          string
 }
 
 func errorHandler(err error) {
@@ -73,7 +74,7 @@ func main() {
         errorHandler(err)
         return
     }
-    err = initPower()
+    err = initPower(config.powerIcon)
     if (err != nil) {
         errorHandler(err)
         return

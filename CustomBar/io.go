@@ -39,6 +39,8 @@ func handleLine(line string, config *BarConfig) (error) {
             config.currentWorkspace = value
         case "volume-icon":
             config.volumeIcon = value
+        case "power-icon":
+            config.powerIcon = value
         case "tray-padding":
             config.trayPadding, err = strconv.Atoi(value)
     }
@@ -55,6 +57,7 @@ func defaultConfig(config *BarConfig, width int) {
     config.fontSize = 16
     config.currentWorkspace = "#0053a0"
     config.volumeIcon = ""
+    config.powerIcon = ""
     config.trayPadding = 5
 }
 
