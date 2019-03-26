@@ -66,18 +66,21 @@ static int  handleEvent(xcb_connection_t *conn, xcb_client_message_event_t *clie
     return (0);
 }
 
-static void setProperties(xcb_connection_t *conn, xcb_window_t window) {
+static void setProperties(xcb_connection_t *conn, xcb_window_t window, float opacity) {
     xcb_atom_t  atom;
-
+    uint32_t    value;
+    
     atom = getAtom(conn, "_NET_WM_STATE_SKIP_TASKBAR");
     xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, getAtom(conn, "_NET_WM_STATE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&atom));
     atom = getAtom(conn, "_NET_WM_WINDOW_TYPE_DOCK");
     xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, getAtom(conn, "_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&atom));
     atom = getAtom(conn, "_NET_WM_WINDOW_TYPE_NORMAL");
     xcb_change_property(conn, XCB_PROP_MODE_APPEND, window, getAtom(conn, "_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, 32, 1, (const void *)(&atom));
+    value = 0xffffffff * (opacity / 100);
+    xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, getAtom(conn, "_NET_WM_WINDOW_OPACITY"), XCB_ATOM_CARDINAL, 32, 1L, &value);
 }
 
-int     createTrayManager(size_t width, size_t height, void *layout) {
+int     createTrayManager(size_t width, size_t height, size_t opacity, void *layout) {
     size_t              i;
     xcb_connection_t    *conn;
     xcb_generic_event_t *event;
@@ -92,7 +95,7 @@ int     createTrayManager(size_t width, size_t height, void *layout) {
     trayManager = getAtom(conn, "_NET_SYSTEM_TRAY_S0");
     screen = xcb_setup_roots_iterator(xcb_get_setup(conn)).data;
     window = createWindow(conn, screen, height);
-    setProperties(conn, window); 
+    setProperties(conn, window, opacity); 
     if (getSelectionOwner(conn, trayManager) != XCB_NONE) {
         dprintf(2, "Tray already have an owner\n");
     }

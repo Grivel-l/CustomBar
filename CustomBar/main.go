@@ -83,6 +83,6 @@ func main() {
     }
     initDate(signals)
     createLayout(widget, xutil, config)
-    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
+    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), C.ulong(config.opacity), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()
 }
