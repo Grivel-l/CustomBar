@@ -45,9 +45,9 @@ func handleLine(line string, config *BarConfig) (error) {
     return err
 }
 
-func defaultConfig(config *BarConfig) {
+func defaultConfig(config *BarConfig, width int) {
     config.height = 33
-    config.width = 1920
+    config.width = width
     config.marginTop = 0
     config.marginLeft = 0
     config.marginRight = 0
@@ -58,14 +58,14 @@ func defaultConfig(config *BarConfig) {
     config.trayPadding = 5
 }
 
-func fillConfig(appName string, config *BarConfig) (error) {
+func fillConfig(appName string, config *BarConfig, width int) (error) {
     var i       int
     var err     error
     var content []byte
     var lines   []string
     var path    string
 
-    defaultConfig(config)
+    defaultConfig(config, width)
     path = strings.Join([]string{os.Getenv("HOME"), "/.config/", appName, "/config"}, "")
     _, err = os.Stat(path)
     if (os.IsNotExist(err)) {

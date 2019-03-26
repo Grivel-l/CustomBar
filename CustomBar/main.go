@@ -48,8 +48,8 @@ func main() {
     var signals     *Signals
     var config      BarConfig
     var xutil       *xgbutil.XUtil
-    var app         *widgets.QApplication
     var widget      *widgets.QWidget
+    var app         *widgets.QApplication
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
@@ -59,12 +59,14 @@ func main() {
         errorHandler(err)
         return
     }
-    err = fillConfig(appName, &config)
+    app = widgets.NewQApplication(len(os.Args), os.Args)
+    widget = widgets.NewQWidget(nil, 0)
+    err = fillConfig(appName, &config, app.Desktop().ScreenGeometry(widget).Width())
     if (err != nil) {
         errorHandler(err)
         return
     }
-    app, widget = initWindow(config)
+    initWindow(config, widget)
     initConfigs(app, config)
     err = initWorkspaces(config, xutil)
     if (err != nil) {

@@ -3,7 +3,6 @@ package main
 import "C"
 
 import (
-    "os"
     "unsafe"
     "strings"
     "strconv"
@@ -21,19 +20,13 @@ func updateMargin(layoutP unsafe.Pointer, size int) {
     layout.SetContentsMargins(0, 0, size, 0)
 }
 
-func initWindow(config BarConfig) (*widgets.QApplication, *widgets.QWidget) {
-    var widget  *widgets.QWidget
-    var app     *widgets.QApplication
-
-    app = widgets.NewQApplication(len(os.Args), os.Args)
-    widget = widgets.NewQWidget(nil, 0)
+func initWindow(config BarConfig, widget *widgets.QWidget) {
     widget.SetMinimumSize2(config.width, config.height)
     widget.SetMaximumSize2(config.width, config.height)
     widget.SetAttribute(core.Qt__WA_X11NetWmWindowTypeDock, true)
     widget.SetAttribute(core.Qt__WA_TranslucentBackground, true)
     widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
     widget.Show()
-    return app, widget
 }
 
 func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config BarConfig) (error) {
