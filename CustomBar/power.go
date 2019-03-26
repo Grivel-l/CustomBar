@@ -16,7 +16,7 @@ func updatePower(remaining int, max int, icon string) {
     var builder     strings.Builder
 
     builder.WriteString(icon)
-    builder.WriteString(" ")
+    builder.WriteString("  ")
     builder.WriteString(strconv.Itoa(int(float32(remaining) / float32(max) * 100)))
     builder.WriteByte('%')
     texts["power"].SetText(builder.String())
@@ -51,7 +51,7 @@ func initPower(icon string) (error) {
     }
     err = nil
     texts["power"] = widgets.NewQLabel(nil, 0)
-    texts["power"].SetAlignment(core.Qt__AlignRight)
+    texts["power"].SetAlignment(core.Qt__AlignCenter)
     texts["power"].SetStyleSheet("color: white")
     content, err = ioutil.ReadFile("/sys/class/power_supply/BAT1/charge_full")
     if (err != nil) {
