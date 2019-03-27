@@ -7,3 +7,8 @@ A customizable status bar for your tiled desktop environment
 ## How to build
 
 `qtmoc && go build`
+
+## Configuration
+
+Configuration file: `$HOME/.config/custombar/config`
+Documentation upcoming...
