@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "fmt"
-    "errors"
     "strings"
     "strconv"
     "io/ioutil"
@@ -53,11 +52,11 @@ func defaultConfig(config *BarConfig, width int) {
     config.marginTop = 0
     config.marginLeft = 0
     config.marginRight = 0
-    config.opacity = 50
+    config.opacity = 40
     config.fontSize = 16
     config.currentWorkspace = "#0053a0"
-    config.volumeIcon = ""
-    config.powerIcon = ""
+    config.volumeIcon = ""
+    config.powerIcon = ""
     config.trayPadding = 5
 }
 
@@ -72,7 +71,8 @@ func fillConfig(appName string, config *BarConfig, width int) (error) {
     path = strings.Join([]string{os.Getenv("HOME"), "/.config/", appName, "/config"}, "")
     _, err = os.Stat(path)
     if (os.IsNotExist(err)) {
-        return errors.New("Config file is missing")
+        fmt.Printf("WARNING: Config file is missing, using default config\n")
+        return nil
     } else if (err != nil && !os.IsExist(err)) {
         return err
     }
