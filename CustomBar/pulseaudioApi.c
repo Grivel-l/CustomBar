@@ -16,7 +16,7 @@ static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void
     if (eol == 1) {
         return ;
     }
-    setVolume((int)((float)infos->volume.values[1] / (float)PA_VOLUME_NORM * 100), params[0], params[1]);
+    setVolume((int)((float)infos->volume.values[0] / (float)PA_VOLUME_NORM * 100), params[0], params[1]);
 }
 
 static void     event_cb(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userData) {
@@ -31,6 +31,41 @@ static void     state_cb(pa_context *c, void *userData) {
     if (pa_context_get_state(c) == PA_CONTEXT_READY) {
         pa_threaded_mainloop_signal(userData, 0);
     }
+}
+
+static  void    set_cb_infos(pa_context *ctx, const pa_sink_info *infos, int eol, void *userData) {
+    int         i;
+    pa_cvolume  volume;
+
+    if (eol == 1) {
+        return ;
+    }
+    i = 0;
+    if ((int)((uintptr_t)userData) > 0) {
+        while (i < infos->volume.channels) {
+            volume.values[i] = infos->volume.values[i] + (PA_VOLUME_NORM / 100 * 2);
+            i += 1;
+        }
+    } else {
+        if ((PA_VOLUME_NORM / 100 * 2) > infos->volume.values[0]) {
+            volume.values[0] = 0;
+            volume.values[1] = 0;
+        } else {
+            while (i < infos->volume.channels) {
+                volume.values[i] = infos->volume.values[i] - (PA_VOLUME_NORM / 100 * 2);
+                i += 1;
+            }
+        }
+    }
+    volume.channels = infos->volume.channels;
+    pa_context_set_sink_volume_by_index(ctx, infos->index, &(volume), NULL, NULL);
+}
+
+void            *update_volume(void *ctxP, int increase) {
+    pa_context  *ctx;
+
+    ctx = (pa_context *)ctxP;
+    pa_context_get_sink_info_list(ctx, set_cb_infos, (void *)((uintptr_t)increase));
 }
 
 void            *create_con(char *appName, void *signals, char *volumeIcon) {

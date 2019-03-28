@@ -23,10 +23,11 @@ type BarConfig struct {
     marginLeft          int
     fontSize            int
     trayPadding         int
+    volumeScroll        bool
     currentWorkspace    string
     opacity             float64
     volumeIcon          string
-    powerIcon          string
+    powerIcon           string
 }
 
 func errorHandler(err error) {
@@ -80,7 +81,7 @@ func main() {
         return
     }
     signals = NewSignals(nil)
-    err = initPulseAudio(appName, unsafe.Pointer(signals), config.volumeIcon)
+    err = initPulseAudio(appName, unsafe.Pointer(signals), config)
     if (err != nil) {
         errorHandler(err)
         return

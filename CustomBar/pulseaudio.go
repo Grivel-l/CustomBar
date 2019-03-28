@@ -24,15 +24,17 @@ func setVolume(volume int, signalsP unsafe.Pointer, volumeIcon *C.char) {
     signals.UpdateWidget("audio", builder.String())
 }
 
-func initPulseAudio(appName string, signals unsafe.Pointer, volumeIcon string) (error) {
+func initPulseAudio(appName string, signals unsafe.Pointer, config BarConfig) (error) {
     var cstring *C.char
+    var ctx     unsafe.Pointer
 
     cstring = C.CString(appName)
-    if (C.create_con(cstring, signals, C.CString(volumeIcon)) == nil) {
+    ctx = C.create_con(cstring, signals, C.CString(config.volumeIcon))
+    if (ctx == nil) {
         return errors.New("Couldn't init pulseaudio")
     }
     C.free(unsafe.Pointer(cstring))
-    initAudio()
+    initAudio(ctx, config)
     return nil
 }
 

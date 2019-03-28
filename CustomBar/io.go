@@ -42,6 +42,12 @@ func handleLine(line string, config *BarConfig) (error) {
             config.powerIcon = value
         case "tray-padding":
             config.trayPadding, err = strconv.Atoi(value)
+        case "volume-scroll":
+            if (value == "true") {
+                config.volumeScroll = true
+            } else {
+                config.volumeScroll = false
+            }
     }
     return err
 }
@@ -58,6 +64,7 @@ func defaultConfig(config *BarConfig, width int) {
     config.volumeIcon = ""
     config.powerIcon = ""
     config.trayPadding = 5
+    config.volumeScroll = true
 }
 
 func fillConfig(appName string, config *BarConfig, width int) (error) {
