@@ -1,5 +1,6 @@
 package main
 
+// #include "./events.h"
 import "C"
 
 import (
@@ -13,12 +14,34 @@ import (
     "github.com/BurntSushi/xgbutil/ewmh"
 )
 
-func createWorkspaceWidget(name string) {
+func createWorkspaceWidget(name string, xutil *xgbutil.XUtil) {
+    var i           int
+    var err         error
+    var workspaces  []string
+    var filter      *core.QObject
+
     texts[name] = widgets.NewQLabel(nil, 0)
     texts[name].SetText(name)
     texts[name].SetMinimumWidth(40)
     texts[name].SetAlignment(core.Qt__AlignHCenter | core.Qt__AlignVCenter)
     texts[name].SetStyleSheet("color: white")
+    texts[name].SetEnabled(true)
+    filter = core.NewQObject(nil)
+    filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
+        if (event.Type() == core.QEvent__MouseButtonPress) {
+            workspaces, err = ewmh.DesktopNamesGet(xutil)
+            if (err != nil) {
+                fmt.Errorf("Error: Couldn't get workspaces\n")
+            }
+            i = 0
+            for (workspaces[i] != name) {
+                i += 1
+            }
+            C.sendClientMessage(C.CString("_NET_CURRENT_DESKTOP"), C.int(i))
+        }
+        return false
+    })
+    texts[name].InstallEventFilter(filter)
 }
 
 func getStylesheet(color string) (string) {
@@ -67,7 +90,7 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
         if (texts[workspaces[i]] != nil) {
             signals.AddWorkspace(app, loop, workspaces, widget, i, int(current), stylesheet)
         } else {
-            signals.AddWidget(app, widget, loop, workspaces[i], stylesheet)
+            signals.AddWidget(app, widget, loop, workspaces[i], stylesheet, xutil)
         }
         loop.Exec(core.QEventLoop__AllEvents)
     }
@@ -98,7 +121,7 @@ func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
         return err
     }
     for i = 0; i < len(workspaces); i++ {
-        createWorkspaceWidget(workspaces[i])
+        createWorkspaceWidget(workspaces[i], xutil)
     }
     current, err = ewmh.CurrentDesktopGet(xutil)
     if (err != nil) {
