@@ -34,7 +34,7 @@ func handleLine(line string, config *structs.BarConfig, module *string) (error) 
         case "volume":
             volume(&config.Volume, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
         case "":
-            fmt.Printf("WARNING: Ignored property '%v', needs to be in a module", strings.TrimSpace(option[0]))
+            fmt.Printf("WARNING: Ignored property '%v', needs to be in a module\n", strings.TrimSpace(option[0]))
     }
     return err
 }
