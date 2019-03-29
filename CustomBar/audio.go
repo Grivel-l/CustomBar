@@ -11,14 +11,14 @@ import (
     "./structs"
 )
 
-func initAudio(ctx unsafe.Pointer, config structs.BarConfig) {
+func initAudio(ctx unsafe.Pointer, config structs.VolumeConfig) {
     var filter  *core.QObject
     var wheelEvent  *gui.QWheelEvent
 
     texts["audio"] = widgets.NewQLabel(nil, 0)
     texts["audio"].SetAlignment(core.Qt__AlignCenter)
     texts["audio"].SetStyleSheet("color: white")
-    if (config.VolumeScroll) {
+    if (config.Scroll) {
         filter = core.NewQObject(nil)
         filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
             if (event.Type() == core.QEvent__Wheel) {

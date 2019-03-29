@@ -26,7 +26,7 @@ func initConfigs(app *widgets.QApplication, config structs.BarConfig) {
     var font    *gui.QFont
 
     font = gui.NewQFont()
-    font.SetPixelSize(config.FontSize)
+    font.SetPixelSize(config.General.FontSize)
     app.SetFont(font, "")
 }
 
@@ -41,7 +41,7 @@ func main() {
 
     appName = "custombar"
     texts = make(map[string]*widgets.QLabel)
-    go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app), unsafe.Pointer(&config))
+    go C.listenClientEvents(unsafe.Pointer(&widget), unsafe.Pointer(&xutil), unsafe.Pointer(&signals), unsafe.Pointer(&app), unsafe.Pointer(&config.Workspaces))
     xutil, err = xgbutil.NewConn()
     if (err != nil) {
         errorHandler(err)
@@ -54,26 +54,26 @@ func main() {
         errorHandler(err)
         return
     }
-    initWindow(config, widget)
+    initWindow(config.General, widget)
     initConfigs(app, config)
-    err = initWorkspaces(config, xutil)
+    err = initWorkspaces(config.Workspaces, xutil)
     if (err != nil) {
         errorHandler(err)
         return
     }
-    err = initPower(config.PowerIcon)
+    err = initPower(config.Power)
     if (err != nil) {
         errorHandler(err)
         return
     }
     signals = NewSignals(nil)
-    err = initPulseAudio(appName, unsafe.Pointer(signals), config)
+    err = initPulseAudio(appName, unsafe.Pointer(signals), config.Volume)
     if (err != nil) {
         errorHandler(err)
         return
     }
     initDate(signals)
-    createLayout(widget, xutil, config)
-    go C.createTrayManager(C.ulong(config.Width), C.ulong(config.Height), C.ulong(config.Opacity), C.ulong(config.TrayPadding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
+    createLayout(widget, xutil, config.General)
+    go C.createTrayManager(C.ulong(config.General.Width), C.ulong(config.General.Height), C.ulong(config.General.Opacity), C.ulong(config.Tray.Padding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()
 }

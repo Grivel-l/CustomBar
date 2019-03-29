@@ -4,7 +4,6 @@ import (
     "os"
     "fmt"
     "strings"
-    "strconv"
     "io/ioutil"
     "../structs"
 )
@@ -12,7 +11,6 @@ import (
 func handleLine(line string, config *structs.BarConfig, module *string) (error) {
     var err     error
     var option  []string
-    var value   string
 
     switch (line) {
         case "[volume]", "[power]", "[workspaces]", "[tray]", "[general]":
@@ -24,60 +22,38 @@ func handleLine(line string, config *structs.BarConfig, module *string) (error) 
         return nil
     }
     err = nil
-    value = strings.TrimSpace(option[1])
-    switch (strings.TrimSpace(option[0])) {
-        case "margin-top":
-            config.MarginTop, err = strconv.Atoi(value)
-        case "margin-right":
-            config.MarginRight, err = strconv.Atoi(value)
-        case "margin-left":
-            config.MarginLeft, err = strconv.Atoi(value)
-        case "height":
-            config.Height, err = strconv.Atoi(value)
-        case "width":
-            config.Width, err = strconv.Atoi(value)
-        case "opacity":
-            config.Opacity, err = strconv.ParseFloat(value, 64)
-        case "font-size":
-            config.FontSize, err = strconv.Atoi(value)
-        case "current-workspace":
-            config.CurrentWorkspace = value
-        case "volume-icon":
-            config.VolumeIcon = value
-        case "power-icon":
-            config.PowerIcon = value
-        case "tray-padding":
-            config.TrayPadding, err = strconv.Atoi(value)
-        case "volume-scroll":
-            if (value == "true") {
-                config.VolumeScroll = true
-            } else {
-                config.VolumeScroll = false
-            }
-        case "workspace-click":
-            if (value == "true") {
-                config.WorkspaceClick = true
-            } else {
-                config.WorkspaceClick = false
-            }
+    switch (*module) {
+        case "general":
+            err = general(&config.General, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "power":
+            power(&config.Power, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "workspaces":
+            workspaces(&config.Workspaces, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "tray":
+            err = tray(&config.Tray, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "volume":
+            volume(&config.Volume, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "":
+        default:
     }
     return err
 }
 
 func defaultConfig(config *structs.BarConfig, width int) {
-    config.Height = 33
-    config.Width = width
-    config.MarginTop = 0
-    config.MarginLeft = 0
-    config.MarginRight = 0
-    config.Opacity = 40
-    config.FontSize = 16
-    config.CurrentWorkspace = "#0053a0"
-    config.VolumeIcon = ""
-    config.PowerIcon = ""
-    config.TrayPadding = 5
-    config.VolumeScroll = true
-    config.WorkspaceClick = true
+    config.General.Height = 33
+    config.General.Height = 33
+    config.General.Width = width
+    config.General.MarginTop = 0
+    config.General.MarginLeft = 0
+    config.General.MarginRight = 0
+    config.General.Opacity = 40
+    config.General.FontSize = 16
+    config.Workspaces.CurrentColor = "#0053a0"
+    config.Workspaces.Click = true
+    config.Volume.Icon = ""
+    config.Volume.Scroll = true
+    config.Power.Icon = ""
+    config.Tray.Padding = 5
 }
 
 func FillConfig(appName string, config *structs.BarConfig, width int) (error) {
@@ -105,7 +81,6 @@ func FillConfig(appName string, config *structs.BarConfig, width int) (error) {
     lines = strings.Split(string(content), "\n")
     for i = 0; i < len(lines); i++ {
         err = handleLine(lines[i], config, &module)
-        fmt.Printf("Module is: %v\n", module)
         if (err != nil) {
             return fmt.Errorf("Bad value at line %v of config file: %v", i + 1, strings.TrimSpace(strings.Split(lines[i], "=")[1]))
         }

@@ -21,7 +21,7 @@ func updateMargin(layoutP unsafe.Pointer, size int) {
     layout.SetContentsMargins(0, 0, size, 0)
 }
 
-func initWindow(config structs.BarConfig, widget *widgets.QWidget) {
+func initWindow(config structs.GeneralConfig, widget *widgets.QWidget) {
     widget.SetMinimumSize2(config.Width, config.Height)
     widget.SetMaximumSize2(config.Width, config.Height)
     widget.SetAttribute(core.Qt__WA_X11NetWmWindowTypeDock, true)
@@ -30,7 +30,7 @@ func initWindow(config structs.BarConfig, widget *widgets.QWidget) {
     widget.Show()
 }
 
-func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.BarConfig) (error) {
+func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.GeneralConfig) (error) {
     var i           int
     var err         error
     var workspaces  []string
