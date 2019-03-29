@@ -18,4 +18,4 @@ Just run `qtmoc && go build` in the CustomBar directory after installing depende
 
 Configuration file: `$HOME/.config/custombar/config`
 
-[Configuration documentation](https://github.com/Grivel-l/CustomBar/wiki/Configuration-file)
+[Configuration documentation](https://github.com/Grivel-l/CustomBar/wiki)
