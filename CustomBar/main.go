@@ -24,6 +24,7 @@ type BarConfig struct {
     fontSize            int
     trayPadding         int
     volumeScroll        bool
+    workspaceClick      bool
     currentWorkspace    string
     opacity             float64
     volumeIcon          string

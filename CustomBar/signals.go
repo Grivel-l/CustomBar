@@ -10,15 +10,15 @@ import (
 type Signals struct {
     core.QObject
         _ func() `constructor:"init"`
-        _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string, xutil *xgbutil.XUtil) `slot:"addWidget"`
+        _ func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string, xutil *xgbutil.XUtil, config BarConfig) `slot:"addWidget"`
         _ func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int, stylesheet string) `slot:"addWorkspace"`
         _ func(widget *widgets.QWidget) `slot:"hideFirstChild"`
         _ func(name string, volume string) `slot:"updateWidget"`
 }
 
 func (s *Signals) init() {
-    s.ConnectAddWidget(func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string, xutil *xgbutil.XUtil) {
-        createWorkspaceWidget(name, xutil)
+    s.ConnectAddWidget(func(app *widgets.QApplication, widget *widgets.QWidget, loop *core.QEventLoop, name string, stylesheet string, xutil *xgbutil.XUtil, config BarConfig) {
+        createWorkspaceWidget(name, xutil, config)
         widget.Layout().ItemAt(0).Layout().AddWidget(texts[name])
         texts[name].SetStyleSheet(stylesheet)
         app.SendEvent(loop, core.NewQEvent(core.QEvent__Quit))

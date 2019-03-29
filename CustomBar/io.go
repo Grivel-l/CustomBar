@@ -48,6 +48,12 @@ func handleLine(line string, config *BarConfig) (error) {
             } else {
                 config.volumeScroll = false
             }
+        case "workspace-click":
+            if (value == "true") {
+                config.workspaceClick = true
+            } else {
+                config.workspaceClick = false
+            }
     }
     return err
 }
@@ -65,6 +71,7 @@ func defaultConfig(config *BarConfig, width int) {
     config.powerIcon = ""
     config.trayPadding = 5
     config.volumeScroll = true
+    config.workspaceClick = true
 }
 
 func fillConfig(appName string, config *BarConfig, width int) (error) {
