@@ -12,24 +12,9 @@ import (
     "github.com/therecipe/qt/gui"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
+    "./parsing"
+    "./structs"
 )
-
-// BarConfig export
-type BarConfig struct {
-    height              int
-    width               int
-    marginTop           int
-    marginRight         int
-    marginLeft          int
-    fontSize            int
-    trayPadding         int
-    volumeScroll        bool
-    workspaceClick      bool
-    currentWorkspace    string
-    opacity             float64
-    volumeIcon          string
-    powerIcon           string
-}
 
 func errorHandler(err error) {
     fmt.Fprintf(os.Stderr, "An error occured: %v\n", err)
@@ -37,11 +22,11 @@ func errorHandler(err error) {
 
 var texts    map[string]*widgets.QLabel
 
-func initConfigs(app *widgets.QApplication, config BarConfig) {
+func initConfigs(app *widgets.QApplication, config structs.BarConfig) {
     var font    *gui.QFont
 
     font = gui.NewQFont()
-    font.SetPixelSize(config.fontSize)
+    font.SetPixelSize(config.FontSize)
     app.SetFont(font, "")
 }
 
@@ -49,7 +34,7 @@ func main() {
     var err         error
     var appName     string
     var signals     *Signals
-    var config      BarConfig
+    var config      structs.BarConfig
     var xutil       *xgbutil.XUtil
     var widget      *widgets.QWidget
     var app         *widgets.QApplication
@@ -64,7 +49,7 @@ func main() {
     }
     app = widgets.NewQApplication(len(os.Args), os.Args)
     widget = widgets.NewQWidget(nil, 0)
-    err = fillConfig(appName, &config, app.Desktop().ScreenGeometry(widget).Width())
+    err = parsing.FillConfig(appName, &config, app.Desktop().ScreenGeometry(widget).Width())
     if (err != nil) {
         errorHandler(err)
         return
@@ -76,7 +61,7 @@ func main() {
         errorHandler(err)
         return
     }
-    err = initPower(config.powerIcon)
+    err = initPower(config.PowerIcon)
     if (err != nil) {
         errorHandler(err)
         return
@@ -89,6 +74,6 @@ func main() {
     }
     initDate(signals)
     createLayout(widget, xutil, config)
-    go C.createTrayManager(C.ulong(config.width), C.ulong(config.height), C.ulong(config.opacity), C.ulong(config.trayPadding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
+    go C.createTrayManager(C.ulong(config.Width), C.ulong(config.Height), C.ulong(config.Opacity), C.ulong(config.TrayPadding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()
 }

@@ -10,6 +10,7 @@ import (
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
     "github.com/BurntSushi/xgbutil/ewmh"
+    "./structs"
 )
 
 //export updateMargin
@@ -20,16 +21,16 @@ func updateMargin(layoutP unsafe.Pointer, size int) {
     layout.SetContentsMargins(0, 0, size, 0)
 }
 
-func initWindow(config BarConfig, widget *widgets.QWidget) {
-    widget.SetMinimumSize2(config.width, config.height)
-    widget.SetMaximumSize2(config.width, config.height)
+func initWindow(config structs.BarConfig, widget *widgets.QWidget) {
+    widget.SetMinimumSize2(config.Width, config.Height)
+    widget.SetMaximumSize2(config.Width, config.Height)
     widget.SetAttribute(core.Qt__WA_X11NetWmWindowTypeDock, true)
     widget.SetAttribute(core.Qt__WA_TranslucentBackground, true)
     widget.SetStyleSheet("background-color: rgba(0, 0, 0, 200)")
     widget.Show()
 }
 
-func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config BarConfig) (error) {
+func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.BarConfig) (error) {
     var i           int
     var err         error
     var workspaces  []string
@@ -68,7 +69,7 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config BarConfi
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
     builder.WriteString("background-color: rgba(0, 0, 0, ")
-    builder.WriteString(strconv.Itoa(int(config.opacity * 255 / 100)))
+    builder.WriteString(strconv.Itoa(int(config.Opacity * 255 / 100)))
     builder.WriteByte(')')
     widget.SetStyleSheet(builder.String())
     return nil

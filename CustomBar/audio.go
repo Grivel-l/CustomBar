@@ -8,16 +8,17 @@ import (
     "github.com/therecipe/qt/gui"
     "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
+    "./structs"
 )
 
-func initAudio(ctx unsafe.Pointer, config BarConfig) {
+func initAudio(ctx unsafe.Pointer, config structs.BarConfig) {
     var filter  *core.QObject
     var wheelEvent  *gui.QWheelEvent
 
     texts["audio"] = widgets.NewQLabel(nil, 0)
     texts["audio"].SetAlignment(core.Qt__AlignCenter)
     texts["audio"].SetStyleSheet("color: white")
-    if (config.volumeScroll) {
+    if (config.VolumeScroll) {
         filter = core.NewQObject(nil)
         filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
             if (event.Type() == core.QEvent__Wheel) {
