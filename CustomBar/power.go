@@ -1,15 +1,15 @@
 package main
 
 import (
-     "os"
+    "os"
     "log"
-    "fmt"
     "time"
     "strings"
     "strconv"
     "io/ioutil"
     "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
+    "./structs"
 )
 
 func updatePower(remaining int, max int, icon string) {
@@ -35,12 +35,11 @@ func listenEvents(max int, icon string) {
     if (err != nil) {
         log.Println(err)
     }
-    fmt.Printf("Remaining: %v, Max: %v\n", remaining, max)
     updatePower(remaining, max, icon)
     time.AfterFunc(60000000000, func() {listenEvents(max, icon)})
 }
 
-func initPower(icon string) (error) {
+func initPower(config structs.PowerConfig) (error) {
     var max     int
     var err     error
     var content []byte
@@ -61,7 +60,7 @@ func initPower(icon string) (error) {
     if (err != nil) {
         return err
     }
-    go listenEvents(max, icon)
+    go listenEvents(max, config.Icon)
     return err
 }
 

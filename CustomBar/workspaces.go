@@ -12,9 +12,10 @@ import (
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
     "github.com/BurntSushi/xgbutil/ewmh"
+    "./structs"
 )
 
-func createWorkspaceWidget(name string, xutil *xgbutil.XUtil, config BarConfig) {
+func createWorkspaceWidget(name string, xutil *xgbutil.XUtil, config structs.WorkspacesConfig) {
     var i           int
     var err         error
     var workspaces  []string
@@ -26,7 +27,7 @@ func createWorkspaceWidget(name string, xutil *xgbutil.XUtil, config BarConfig) 
     texts[name].SetAlignment(core.Qt__AlignHCenter | core.Qt__AlignVCenter)
     texts[name].SetStyleSheet("color: white")
     texts[name].SetEnabled(true)
-    if (config.workspaceClick) {
+    if (config.Click) {
         filter = core.NewQObject(nil)
         filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
             if (event.Type() == core.QEvent__MouseButtonPress) {
@@ -62,10 +63,10 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
     var stylesheet  string
     var workspaces  []string
     var signals     *Signals
-    var config      BarConfig
     var xutil       *xgbutil.XUtil
     var widget      *widgets.QWidget
     var loop        *core.QEventLoop
+    var config      structs.WorkspacesConfig
     var app         *widgets.QApplication
 
     app = *(**widgets.QApplication)(appP)
@@ -73,8 +74,8 @@ func updateWorkspace(widgetP unsafe.Pointer, xutilP unsafe.Pointer, signalsP uns
     xutil = *(**xgbutil.XUtil)(xutilP)
     widget = *(**widgets.QWidget)(widgetP)
     workspaces, err = ewmh.DesktopNamesGet(xutil)
-    config = *(*BarConfig)(configP)
-    stylesheet = getStylesheet(config.currentWorkspace)
+    config = *(*structs.WorkspacesConfig)(configP)
+    stylesheet = getStylesheet(config.CurrentColor)
     if (err != nil) {
         fmt.Fprintf(os.Stderr, err.Error())
         return
@@ -111,7 +112,7 @@ func getWorkspacesNbr() (uint, error) {
     return ewmh.NumberOfDesktopsGet(xutil)
 }
 
-func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
+func initWorkspaces(config structs.WorkspacesConfig, xutil *xgbutil.XUtil) (error) {
     var i           int
     var current     uint
     var err         error
@@ -130,7 +131,7 @@ func initWorkspaces(config BarConfig, xutil *xgbutil.XUtil) (error) {
         return err
     }
     builder.WriteString("color: white; background-color: ")
-    builder.WriteString(config.currentWorkspace)
+    builder.WriteString(config.CurrentColor)
     texts[workspaces[current]].SetStyleSheet(builder.String())
     return nil
 }
