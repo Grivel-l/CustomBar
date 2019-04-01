@@ -14,6 +14,10 @@ func workspaces(config *structs.WorkspacesConfig, property string, value string)
             }
         case "current-color":
             config.CurrentColor = value
+        case "position":
+            config.Position = value
+        case "alignment":
+            config.Alignment = value
     }
 }
 

@@ -15,17 +15,23 @@ type TrayConfig struct {
 }
 
 type VolumeConfig struct {
-    Scroll  bool
-    Icon    string
+    Scroll      bool
+    Icon        string
+    Position    string
+    Alignment   string
 }
 
 type WorkspacesConfig struct {
     Click           bool
     CurrentColor    string
+    Position        string
+    Alignment       string
 }
 
 type PowerConfig struct {
-    Icon    string
+    Icon        string
+    Position    string
+    Alignment   string
 }
 
 type BarConfig struct {

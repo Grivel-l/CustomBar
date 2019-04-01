@@ -16,7 +16,6 @@ func initAudio(ctx unsafe.Pointer, config structs.VolumeConfig) {
     var wheelEvent  *gui.QWheelEvent
 
     texts["audio"] = widgets.NewQLabel(nil, 0)
-    texts["audio"].SetAlignment(core.Qt__AlignCenter)
     texts["audio"].SetStyleSheet("color: white")
     if (config.Scroll) {
         filter = core.NewQObject(nil)

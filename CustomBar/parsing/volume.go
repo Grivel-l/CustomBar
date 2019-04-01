@@ -14,6 +14,10 @@ func volume(config *structs.VolumeConfig, property string, value string) {
             }
         case "icon":
             config.Icon = value
+        case "position":
+            config.Position = value
+        case "alignment":
+            config.Alignment = value
     }
 }
 

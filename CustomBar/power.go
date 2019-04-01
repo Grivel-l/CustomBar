@@ -7,7 +7,6 @@ import (
     "strings"
     "strconv"
     "io/ioutil"
-    "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
     "./structs"
 )
@@ -50,7 +49,7 @@ func initPower(config structs.PowerConfig) (error) {
     }
     err = nil
     texts["power"] = widgets.NewQLabel(nil, 0)
-    texts["power"].SetAlignment(core.Qt__AlignCenter)
+    /* texts["power"].SetAlignment(core.Qt__AlignCenter) */
     texts["power"].SetStyleSheet("color: white")
     content, err = ioutil.ReadFile("/sys/class/power_supply/BAT1/charge_full")
     if (err != nil) {

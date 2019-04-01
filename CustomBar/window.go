@@ -30,7 +30,24 @@ func initWindow(config structs.GeneralConfig, widget *widgets.QWidget) {
     widget.Show()
 }
 
-func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.GeneralConfig) (error) {
+func setPosition(box [3]*widgets.QHBoxLayout, widget *widgets.QLabel, position string, alignment string) {
+    if (position == "left") {
+        box[0].AddWidget(widget, 0, 0)
+    } else if (position == "center") {
+        box[1].AddWidget(widget, 0, 0)
+    } else if (position == "right") {
+        box[2].AddWidget(widget, 0, 0)
+    }
+    if (alignment == "left") {
+        widget.SetAlignment(core.Qt__AlignLeft)
+    } else if (alignment == "center") {
+        widget.SetAlignment(core.Qt__AlignCenter)
+    } else if (alignment == "right") {
+        widget.SetAlignment(core.Qt__AlignRight)
+    }
+}
+
+func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.BarConfig) (error) {
     var i           int
     var err         error
     var workspaces  []string
@@ -50,15 +67,15 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.
     box[1] = widgets.NewQHBoxLayout()
     box[2] = widgets.NewQHBoxLayout()
     for i = 0; i < len(workspaces); i++ {
-        box[0].AddWidget(texts[workspaces[i]], 0, 0)
+        setPosition(box, texts[workspaces[i]], config.Workspaces.Position, "left")
     }
     box[0].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
-    box[2].AddWidget(texts["audio"], 0, 0)
+    setPosition(box, texts["audio"], config.Volume.Position, config.Volume.Alignment)
     texts["audio"].SetContentsMargins(10, 0, 10, 0)
     if (texts["power"] != nil) {
-        box[2].AddWidget(texts["power"], 0, 0)
+        setPosition(box, texts["power"], config.Power.Position, config.Volume.Alignment)
         texts["power"].SetContentsMargins(10, 0, 10, 0)
     }
     grid.AddLayout(box[0], 1)
@@ -69,7 +86,7 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.
     widget.SetLayout(grid)
     widget.SetLayoutDirection(core.Qt__LeftToRight)
     builder.WriteString("background-color: rgba(0, 0, 0, ")
-    builder.WriteString(strconv.Itoa(int(config.Opacity * 255 / 100)))
+    builder.WriteString(strconv.Itoa(int(config.General.Opacity * 255 / 100)))
     builder.WriteByte(')')
     widget.SetStyleSheet(builder.String())
     return nil

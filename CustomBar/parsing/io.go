@@ -50,9 +50,15 @@ func defaultConfig(config *structs.BarConfig, width int) {
     config.General.FontSize = 16
     config.Workspaces.CurrentColor = "#0053a0"
     config.Workspaces.Click = true
+    config.Workspaces.Position = "left"
+    config.Workspaces.Alignment = "left"
     config.Volume.Icon = ""
     config.Volume.Scroll = true
+    config.Volume.Position = "right"
+    config.Volume.Alignment = "right"
     config.Power.Icon = ""
+    config.Power.Position = "right"
+    config.Power.Alignment = "center"
     config.Tray.Padding = 5
 }
 
