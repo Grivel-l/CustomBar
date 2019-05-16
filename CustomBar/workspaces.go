@@ -33,11 +33,10 @@ func createWorkspaceWidget(name string, xutil *xgbutil.XUtil, config structs.Wor
             if (event.Type() == core.QEvent__MouseButtonPress) {
                 workspaces, err = ewmh.DesktopNamesGet(xutil)
                 if (err != nil) {
-                    fmt.Errorf("Error: Couldn't get workspaces\n")
+                    fmt.Fprintf(os.Stderr, "Error: Couldn't get workspaces\n")
                 }
-                i = 0
-                for (workspaces[i] != name) {
-                    i += 1
+                for i = 0; workspaces[i] != name; i++ {
+                    ;
                 }
                 C.sendClientMessage(C.CString("_NET_CURRENT_DESKTOP"), C.int(i))
             }
