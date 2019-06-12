@@ -28,7 +28,12 @@ type PowerConfig struct {
     Icon    string
 }
 
+type TimeConfig struct {
+    Click   bool
+}
+
 type BarConfig struct {
+    Time       TimeConfig
     Tray       TrayConfig
     Power      PowerConfig
     Volume     VolumeConfig

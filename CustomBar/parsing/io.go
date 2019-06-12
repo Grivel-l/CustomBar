@@ -13,7 +13,7 @@ func handleLine(line string, config *structs.BarConfig, module *string) (error) 
     var option  []string
 
     switch (line) {
-        case "[volume]", "[power]", "[workspaces]", "[tray]", "[general]":
+        case "[volume]", "[power]", "[workspaces]", "[tray]", "[general]", "[time]":
             *module = line[1:len(line) - 1]
             return nil
     }
@@ -33,6 +33,8 @@ func handleLine(line string, config *structs.BarConfig, module *string) (error) 
             err = tray(&config.Tray, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
         case "volume":
             volume(&config.Volume, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
+        case "time":
+            time(&config.Time, strings.TrimSpace(option[0]), strings.TrimSpace(option[1]))
         case "":
             fmt.Printf("WARNING: Ignored property '%v', needs to be in a module\n", strings.TrimSpace(option[0]))
     }
@@ -54,6 +56,7 @@ func defaultConfig(config *structs.BarConfig, width int) {
     config.Volume.Scroll = true
     config.Power.Icon = ""
     config.Tray.Padding = 5
+    config.Time.Click = true
 }
 
 func FillConfig(appName string, config *structs.BarConfig, width int) (error) {

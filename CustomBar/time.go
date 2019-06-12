@@ -14,6 +14,9 @@ func initDate(signals *Signals) {
     var timer       *time.Timer
 
     accurate = false
+    texts["time"] = widgets.NewQLabel(nil, 0)
+    texts["time"].SetAlignment(core.Qt__AlignCenter)
+    texts["time"].SetStyleSheet("color: white")
     filter = core.NewQObject(nil)
     filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
         if (event.Type() == core.QEvent__MouseButtonPress) {
@@ -23,9 +26,6 @@ func initDate(signals *Signals) {
         }
         return false
     })
-    texts["time"] = widgets.NewQLabel(nil, 0)
-    texts["time"].SetAlignment(core.Qt__AlignCenter)
-    texts["time"].SetStyleSheet("color: white")
     texts["time"].InstallEventFilter(filter)
     printDate(signals, &accurate, &timer)
 }
