@@ -72,7 +72,7 @@ func main() {
         errorHandler(err)
         return
     }
-    initDate(signals)
+    initDate(signals, config.Time)
     createLayout(widget, xutil, config.General)
     go C.createTrayManager(C.ulong(config.General.Width), C.ulong(config.General.Height), C.ulong(config.General.Opacity), C.ulong(config.Tray.Padding), unsafe.Pointer(widget.Layout().ItemAt(2).Layout()))
     app.Exec()

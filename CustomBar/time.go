@@ -6,9 +6,10 @@ import (
     "strings"
     "github.com/therecipe/qt/core"
     "github.com/therecipe/qt/widgets"
+    "./structs"
 )
 
-func initDate(signals *Signals) {
+func initDate(signals *Signals, config structs.TimeConfig) {
     var accurate    bool
     var filter      *core.QObject
     var timer       *time.Timer
@@ -17,16 +18,18 @@ func initDate(signals *Signals) {
     texts["time"] = widgets.NewQLabel(nil, 0)
     texts["time"].SetAlignment(core.Qt__AlignCenter)
     texts["time"].SetStyleSheet("color: white")
-    filter = core.NewQObject(nil)
-    filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
-        if (event.Type() == core.QEvent__MouseButtonPress) {
-            accurate = !accurate
-            timer.Stop()
-            printDate(signals, &accurate, &timer)
-        }
-        return false
-    })
-    texts["time"].InstallEventFilter(filter)
+    if (config.Click) {
+        filter = core.NewQObject(nil)
+        filter.ConnectEventFilter(func (watched *core.QObject, event *core.QEvent) bool {
+            if (event.Type() == core.QEvent__MouseButtonPress) {
+                accurate = !accurate
+                timer.Stop()
+                printDate(signals, &accurate, &timer)
+            }
+            return false
+        })
+        texts["time"].InstallEventFilter(filter)
+    }
     printDate(signals, &accurate, &timer)
 }
 
