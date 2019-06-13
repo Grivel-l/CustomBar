@@ -13,7 +13,7 @@ static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void
     void    **params;
 
     params = userData;
-    if (eol == 1) {
+    if (eol == 1 || infos->state != PA_SINK_RUNNING) {
         return ;
     }
     setVolume((int)((float)infos->volume.values[0] / (float)PA_VOLUME_NORM * 100), params[0], params[1]);
@@ -37,7 +37,7 @@ static  void    set_cb_infos(pa_context *ctx, const pa_sink_info *infos, int eol
     int         i;
     pa_cvolume  volume;
 
-    if (eol == 1) {
+    if (eol == 1 || infos->state != PA_SINK_RUNNING) {
         return ;
     }
     i = 0;
