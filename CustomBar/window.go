@@ -55,6 +55,9 @@ func createLayout(widget *widgets.QWidget, xutil *xgbutil.XUtil, config structs.
     box[0].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
     box[1].AddWidget(texts["time"], 0, 0)
     box[2].AddWidget(widgets.NewQWidget(nil, 0), 1, 0)
+    if (texts["olkb"] != nil) {
+      box[2].AddWidget(texts["olkb"], 0, 0)
+    }
     box[2].AddWidget(texts["audio"], 0, 0)
     texts["audio"].SetContentsMargins(10, 0, 10, 0)
     if (texts["power"] != nil) {

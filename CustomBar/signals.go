@@ -1,6 +1,7 @@
 package main
 
 import (
+    "strings"
     "github.com/therecipe/qt/core"
     "github.com/BurntSushi/xgbutil"
     "github.com/therecipe/qt/widgets"
@@ -15,6 +16,7 @@ type Signals struct {
         _ func(app *widgets.QApplication, loop *core.QEventLoop, workspaces []string, widget *widgets.QWidget, i int, current int, stylesheet string) `slot:"addWorkspace"`
         _ func(widget *widgets.QWidget) `slot:"hideFirstChild"`
         _ func(name string, volume string) `slot:"updateWidget"`
+        _ func(order string) `slot:"updateOrder"`
 }
 
 func (s *Signals) init() {
@@ -54,6 +56,13 @@ func (s *Signals) init() {
     })
     s.ConnectUpdateWidget(func(name string, text string) {
         texts[name].SetText(text)
+    })
+    s.ConnectUpdateOrder(func(order string) {
+      var builder strings.Builder
+
+      builder.WriteString("Order ")
+      builder.WriteString(order)
+      texts["olkb"].SetText(builder.String())
     })
 }
 

@@ -32,7 +32,13 @@ type TimeConfig struct {
     Click   bool
 }
 
+type OlkbConfig struct {
+    Enable  bool
+    Order   string
+}
+
 type BarConfig struct {
+    Olkb       OlkbConfig
     Time       TimeConfig
     Tray       TrayConfig
     Power      PowerConfig
