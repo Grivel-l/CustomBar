@@ -13,14 +13,14 @@ static  void    cb_infos(pa_context *c, const pa_sink_info *infos, int eol, void
     void    **params;
 
     params = userData;
-    if (eol == 1 || infos->state != PA_SINK_RUNNING) {
+    if (eol == 1) {
         return ;
     }
     setVolume((int)((float)infos->volume.values[0] / (float)PA_VOLUME_NORM * 100), params[0], params[1]);
 }
 
 static void     event_cb(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userData) {
-    pa_context_get_sink_info_list(c, cb_infos, userData);
+    pa_context_get_sink_info_by_index(c, 0, cb_infos, userData);
 }
 
 static void     event_success_cb(pa_context *c, int success, void *userData) {
@@ -37,7 +37,7 @@ static  void    set_cb_infos(pa_context *ctx, const pa_sink_info *infos, int eol
     int         i;
     pa_cvolume  volume;
 
-    if (eol == 1 || infos->state != PA_SINK_RUNNING) {
+    if (eol == 1) {
         return ;
     }
     i = 0;
@@ -104,7 +104,7 @@ void            *create_con(char *appName, void *signals, char *volumeIcon) {
     params[1] = volumeIcon;
     pa_context_set_subscribe_callback(ctx, event_cb, (void *)params);
     pa_threaded_mainloop_unlock(loop);
-    pa_context_get_sink_info_list(ctx, cb_infos, (void *)params);
+    pa_context_get_sink_info_by_index(ctx, 0, cb_infos, (void *)params);
     return (ctx);
 }
 
