@@ -60,7 +60,7 @@ func (s *Signals) init() {
     s.ConnectUpdateOrder(func(order string) {
       var builder strings.Builder
 
-      builder.WriteString("Order ")
+      builder.WriteString("Order #")
       builder.WriteString(order)
       texts["olkb"].SetText(builder.String())
     })
