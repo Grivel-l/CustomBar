@@ -65,7 +65,7 @@ void            *update_volume(void *ctxP, int increase) {
     pa_context  *ctx;
 
     ctx = (pa_context *)ctxP;
-    pa_context_get_sink_info_list(ctx, set_cb_infos, (void *)((uintptr_t)increase));
+    pa_context_get_sink_info_by_index(ctx, 0, set_cb_infos, (void *)((uintptr_t)increase));
 }
 
 void            *create_con(char *appName, void *signals, char *volumeIcon) {
