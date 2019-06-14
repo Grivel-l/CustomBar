@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "time"
     "strings"
     "net/http"
     "io/ioutil"
@@ -56,5 +57,6 @@ func checkOrders(signals *Signals, config structs.OlkbConfig) {
     } else {
         printErr(err)
     }
+    time.AfterFunc(600000000000, func() {checkOrders(signals, config)})
 }
 
